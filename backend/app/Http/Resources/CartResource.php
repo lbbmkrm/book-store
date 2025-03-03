@@ -19,17 +19,17 @@ class CartResource extends JsonResource
         $totalPrice = 0;
 
         foreach ($this->cartDetails as $item) {
-            $subtotal = $item->quantity * $item->product->price;
+            $subtotal = $item->quantity * $item->book->price;
             $totalItems += $item->quantity;
             $totalPrice += $subtotal;
 
             $items[] = [
                 'id' => $item->id,
-                'product_id' => $item->product_id,
-                'product_name' => $item->product->name,
-                'image' => asset('storage/' . $item->product->image),
+                'book_id' => $item->book_id,
+                'book_name' => $item->book->title,
+                'image' => asset('storage/' . $item->book->img),
                 'quantity' => $item->quantity,
-                'price' => $item->product->price,
+                'price' => $item->book->price,
                 'subtotal' => $subtotal
             ];
         }

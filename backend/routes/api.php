@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CartController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrderController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -20,4 +21,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/cart/decrease/{id}', [CartController::class, 'decrementQuantity']);
     Route::delete('/cart/remove/{id}', [CartController::class, 'removeFromCart']);
     Route::delete('/cart/clear', [CartController::class, 'clearCart']);
+
+
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
+    Route::post('/orders', [OrderController::class, 'store']);
 });

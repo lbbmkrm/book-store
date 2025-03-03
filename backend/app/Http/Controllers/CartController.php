@@ -18,7 +18,7 @@ class CartController extends Controller
      */
     public function index(): JsonResource|JsonResponse
     {
-        $cart = Cart::where('user_id', Auth::id())->with('cartDetails.product')->first();
+        $cart = Cart::where('user_id', Auth::id())->with('cartDetails.book')->first();
         if (!$cart || $cart->cartDetails->isEmpty()) {
             return response()->json(['message' => 'Cart is empty'], 200);
         }
@@ -32,7 +32,7 @@ class CartController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validate = Validator::make($request->all(), [
-            'product_id' => 'required|exists:products,id',
+            'book_id' => 'required|exists:books,id',
             'quantity' => 'required|integer|min:1'
         ]);
 
@@ -46,7 +46,7 @@ class CartController extends Controller
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 
         $cartDetail = CartDetail::where('cart_id', $cart->id)
-            ->where('product_id', $request->product_id)
+            ->where('book_id', $request->book_id)
             ->first();
 
         if ($cartDetail) {
@@ -54,7 +54,7 @@ class CartController extends Controller
         } else {
             CartDetail::create([
                 'cart_id' => $cart->id,
-                'product_id' => $request->product_id,
+                'book_id' => $request->book_id,
                 'quantity' => $request->quantity
             ]);
         }

@@ -9,7 +9,7 @@ class CartDetail extends Model
 {
     protected $fillable = [
         'cart_id',
-        'product_id',
+        'book_id',
         'quantity'
     ];
 
