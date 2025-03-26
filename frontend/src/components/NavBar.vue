@@ -1,12 +1,12 @@
 <script></script>
 <template>
-  <nav class="bg-white shadow-lg">
+  <nav class="bg-white">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between h-16">
         <!-- Logo and brand -->
         <div class="flex items-center">
           <div class="flex-shrink-0">
-            <span class="text-2xl text-gray-800">myStore</span>
+            <span class="font-serif text-2xl text-gray-800">myStore</span>
           </div>
         </div>
         <!-- end logo -->

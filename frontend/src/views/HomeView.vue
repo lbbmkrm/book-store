@@ -1,7 +1,9 @@
-<script setup></script>
+<script setup>
+import HeroSection from '@/components/HeroSection.vue'
+</script>
 
 <template>
   <main>
-    <h1 class="text-3xl text-violet-950">Hello world!</h1>
+    <HeroSection />
   </main>
 </template>
