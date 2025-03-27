@@ -4,7 +4,7 @@ const heroImage = ref('/assets/img/hero.jpg')
 </script>
 <template>
   <section class="bg-white mx-auto min-h-screen md:w-[85%]">
-    <div class="container p-8 mt-8 md:py-12 px-4 flex flex-col md:flex-row">
+    <div class="container p-8 md:py-12 px-4 flex flex-col md:flex-row">
       <!-- left content -->
       <div class="h-screen w-full md:w-1/2 flex flex-col justify-center space-y-8">
         <h1 class="font-serif font-bold mb-12 text-4xl md:text-5xl leading-tight text-gray-900">
