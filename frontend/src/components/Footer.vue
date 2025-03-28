@@ -38,23 +38,21 @@
         </div>
 
         <div>
-          <h3 class="text-lg font-bold mb-4">Kontak</h3>
-          <ul class="space-y-2 text-gray-400">
-            <li class="flex items-center">
-              <span class="mr-2">📍</span> Jl. Buku Pintar No. 123, Jakarta
-            </li>
-            <li class="flex items-center"><span class="mr-2">📞</span> +62 123 4567 890</li>
-            <li class="flex items-center"><span class="mr-2">✉️</span> hello@tokobuku.com</li>
-          </ul>
-          <div class="mt-4">
-            <h4 class="text-sm font-bold mb-2">Metode Pembayaran</h4>
-            <div class="flex space-x-2">
-              <span class="bg-white text-gray-900 rounded px-2 py-1 text-xs">VISA</span>
-              <span class="bg-white text-gray-900 rounded px-2 py-1 text-xs">MC</span>
-              <span class="bg-white text-gray-900 rounded px-2 py-1 text-xs">BCA</span>
-              <span class="bg-white text-gray-900 rounded px-2 py-1 text-xs">OVO</span>
-            </div>
-          </div>
+          <h3 class="text-lg font-bold mb-4">Newsletter</h3>
+          <p class="text-gray-400 text-sm mb-4">Dapatkan informasi promo dan buku terbaru</p>
+          <form class="space-y-2">
+            <input
+              type="email"
+              placeholder="Masukkan email Anda"
+              class="w-full px-3 py-2 bg-gray-800 text-white border border-gray-700 rounded focus:outline-none focus:border-blue-500"
+            />
+            <button
+              type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition-colors"
+            >
+              Berlangganan
+            </button>
+          </form>
         </div>
       </div>
 

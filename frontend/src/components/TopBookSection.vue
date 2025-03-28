@@ -32,7 +32,7 @@ const topBooks = ref([
 ])
 </script>
 <template>
-  <section class="py-16 min-h-screen flex item-center">
+  <section class="py-16 min-h-screen flex item-center mb-24 md:mb-0">
     <div class="container max-w-6xl mx-auto px-4">
       <div class="text-center mb-12">
         <h2 class="text-3xl font-serif font-bold text-gray-900">Buku Unggulan</h2>

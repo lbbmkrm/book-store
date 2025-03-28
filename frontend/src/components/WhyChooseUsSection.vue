@@ -24,9 +24,9 @@ const features = ref([
 ])
 </script>
 <template>
-  <section class="min-h-screen flex">
+  <section class="min-h-screen flex mb-8 md:mb-0">
     <div class="container flex flex-col w-[85%] md:w-[75%] mx-auto gap-8 self-center">
-      <div class="text-center">
+      <div class="text-center md:mb-8">
         <h3 class="text-3xl font-serif font-bold text-gray-800">Mengapa Memilih Kami</h3>
         <p class="text-sm text-gray-500">Keunggulan yang membuat kami berbeda</p>
       </div>
