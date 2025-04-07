@@ -1,99 +1,90 @@
-<script></script>
+<script setup>
+import { ref } from 'vue'
+import HamburgerIcon from './icons/hamburger-icon.vue'
+import CrossIcon from './icons/cross-icon.vue'
+import HomeIcon from './icons/home-icon.vue'
+import ShopIcon from './icons/shop-icon.vue'
+import AboutIcon from './icons/about-icon.vue'
+import CartIcon from './icons/cart-icon.vue'
+import OrderIcon from './icons/order-icon.vue'
+import ProfileIcon from './icons/profile-icon.vue'
+
+const isMenuOpen = ref(false)
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
+const closeMenu = () => {
+  isMenuOpen.value = false
+}
+
+const navigationButtonClass =
+  'flex items-center cursor-pointer rounded-md px-3 py-2 text-gray-700 transform transition-transform hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 ease-in-out  hover:scale-105 gap-2 '
+</script>
 <template>
-  <nav class="bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="flex justify-between h-16">
-        <!-- Logo and brand -->
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <span class="font-serif text-2xl text-gray-800">myStore</span>
-          </div>
-        </div>
-        <!-- end logo -->
+  <nav class="fixed w-full top-0 left-0 right-0 bg-white">
+    <div class="w-full p-4 flex justify-between items-center">
+      <!-- Logo -->
+      <div class="logo flex item-center">
+        <h1 class="font-serif text-xl md:text-3xl font-light">mystore</h1>
+      </div>
+      <!-- Center Nav -->
+      <div class="center-navigation hidden md:flex gap-8 text-xl items-center">
+        <button :class="navigationButtonClass"><HomeIcon />Home</button>
+        <button :class="navigationButtonClass"><ShopIcon />Shop</button>
+        <button :class="navigationButtonClass"><AboutIcon />About</button>
+      </div>
+      <!-- Right Nav -->
+      <div class="right-navigation hidden md:flex item-center justify-end gap-4">
+        <button :class="navigationButtonClass">
+          <CartIcon />
+        </button>
+        <button :class="navigationButtonClass">
+          <OrderIcon />
+        </button>
+        <button :class="navigationButtonClass">
+          <ProfileIcon />
+        </button>
+      </div>
 
-        <!-- Center navigation -->
-        <div class="hidden md:flex items-center justify-center flex-1">
-          <div class="flex space-x-8">
+      <!-- Mobile Nav -->
+      <div class="mobile-nav md:hidden flex item-center">
+        <button
+          @click="toggleMenu"
+          class="cursor-pointer text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 ease transform hover:sclae-110 relative"
+        >
+          <HamburgerIcon v-if="!isMenuOpen" />
+          <CrossIcon v-if="isMenuOpen" />
+        </button>
+      </div>
+
+      <!-- Mobile menu overlay -->
+      <div
+        v-if="isMenuOpen"
+        class="fixed inset-0 bg-transparent backdrop-blur-sm z-10 md:hidden transition-opacity duration-400"
+        @click="closeMenu"
+      ></div>
+      <!-- Mobile Menu -->
+      <div
+        class="z-20 fixed min-w-[60%] tranform transition-all perspective-origin-right py-2 right-0 top-0 h-full bg-white shadow-md duration-400 ease-in-out md:hidden"
+        :class="isMenuOpen ? 'translate-x-0' : 'translate-full'"
+      >
+        <div class="flex flex-col w-full p-4 gap-4">
+          <div class="flex justify-end mb-4 rounded-full">
             <button
-              class="flex items-center px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 text-xl cursor-pointer"
+              @click="closeMenu"
+              :class="navigationButtonClass"
+              class="hover:transform hover:rotate-180 transition-all ease-in-out duration-400"
             >
-              <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                />
-              </svg>
-              Home
-            </button>
-            <button
-              class="flex items-center px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 text-xl cursor-pointer"
-            >
-              <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
-              Shop
-            </button>
-            <button
-              class="flex items-center px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 text-xl cursor-pointer"
-            >
-              <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              About
+              <CrossIcon />
             </button>
           </div>
-        </div>
-
-        <!-- Right icon navigation -->
-        <div class="hidden md:flex items-center space-x-4">
-          <button
-            class="p-2 rounded-full text-gray-700 hover:text-gray-900 hover:bg-gray-100 cursor-pointer"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-          </button>
-          <button
-            class="p-2 rounded-full text-gray-700 hover:text-gray-900 hover:bg-gray-100 cursor-pointer"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-              />
-            </svg>
-          </button>
-          <button
-            class="p-2 rounded-full text-gray-700 hover:text-gray-900 hover:bg-gray-100 cursor-pointer"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
-          </button>
+          <button :class="navigationButtonClass"><HomeIcon />Home</button>
+          <button :class="navigationButtonClass"><ShopIcon />Shop</button>
+          <button :class="navigationButtonClass"><AboutIcon />About</button>
+          <button :class="navigationButtonClass"><CartIcon />Cart</button>
+          <button :class="navigationButtonClass"><OrderIcon />Orders</button>
+          <button :class="navigationButtonClass"><ProfileIcon />Profile</button>
         </div>
       </div>
     </div>

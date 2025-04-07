@@ -1,0 +1,60 @@
+<template>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <!-- Background Circle -->
+    <circle cx="100" cy="100" r="90" fill="#4F46E5" />
+    <circle cx="100" cy="100" r="80" fill="white" />
+
+    <!-- Books Stack -->
+    <g transform="translate(50, 50)">
+      <!-- Book 1 (Bottom) -->
+      <rect x="10" y="70" width="80" height="20" rx="2" fill="#4F46E5" />
+      <rect x="10" y="67" width="80" height="3" rx="1" fill="#3730A3" />
+
+      <!-- Book 2 (Middle) -->
+      <rect x="5" y="50" width="90" height="20" rx="2" fill="#818CF8" />
+      <rect x="5" y="47" width="90" height="3" rx="1" fill="#6366F1" />
+
+      <!-- Book 3 (Top) -->
+      <rect x="15" y="30" width="70" height="20" rx="2" fill="#C7D2FE" />
+      <rect x="15" y="27" width="70" height="3" rx="1" fill="#A5B4FC" />
+
+      <!-- Open Book -->
+      <g transform="translate(25, -20)">
+        <!-- Left Page -->
+        <path d="M0 15 L0 65 L25 60 L25 10 Z" fill="#F3F4F6" stroke="#6366F1" stroke-width="1.5" />
+
+        <!-- Right Page -->
+        <path
+          d="M25 10 L25 60 L50 65 L50 15 Z"
+          fill="#F9FAFB"
+          stroke="#6366F1"
+          stroke-width="1.5"
+        />
+
+        <!-- Book Spine -->
+        <path
+          d="M0 15 L25 10 L50 15"
+          fill="none"
+          stroke="#4F46E5"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+
+        <!-- Text Lines (left page) -->
+        <line x1="5" y1="25" x2="20" y2="25" stroke="#9CA3AF" stroke-width="1" />
+        <line x1="5" y1="30" x2="20" y2="30" stroke="#9CA3AF" stroke-width="1" />
+        <line x1="5" y1="35" x2="20" y2="35" stroke="#9CA3AF" stroke-width="1" />
+        <line x1="5" y1="40" x2="15" y2="40" stroke="#9CA3AF" stroke-width="1" />
+
+        <!-- Text Lines (right page) -->
+        <line x1="30" y1="25" x2="45" y2="25" stroke="#9CA3AF" stroke-width="1" />
+        <line x1="30" y1="30" x2="45" y2="30" stroke="#9CA3AF" stroke-width="1" />
+        <line x1="30" y1="35" x2="45" y2="35" stroke="#9CA3AF" stroke-width="1" />
+        <line x1="30" y1="40" x2="40" y2="40" stroke="#9CA3AF" stroke-width="1" />
+      </g>
+    </g>
+
+    <!-- Bookmark Ribbon -->
+    <path d="M130 40 L140 50 L130 60" fill="#EF4444" stroke="#DC2626" stroke-width="1" />
+  </svg>
+</template>
