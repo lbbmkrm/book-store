@@ -8,6 +8,7 @@ import AboutIcon from './icons/about-icon.vue'
 import CartIcon from './icons/cart-icon.vue'
 import OrderIcon from './icons/order-icon.vue'
 import ProfileIcon from './icons/profile-icon.vue'
+import { RouterLink } from 'vue-router'
 
 const isMenuOpen = ref(false)
 
@@ -30,9 +31,9 @@ const navigationButtonClass =
       </div>
       <!-- Center Nav -->
       <div class="center-navigation hidden md:flex gap-8 text-xl items-center">
-        <button :class="navigationButtonClass"><HomeIcon />Home</button>
-        <button :class="navigationButtonClass"><ShopIcon />Shop</button>
-        <button :class="navigationButtonClass"><AboutIcon />About</button>
+        <RouterLink to="/" :class="navigationButtonClass"><HomeIcon />Home</RouterLink>
+        <RouterLink to="/shop" :class="navigationButtonClass"><ShopIcon />Shop</RouterLink>
+        <RouterLink :class="navigationButtonClass"><AboutIcon />About</RouterLink>
       </div>
       <!-- Right Nav -->
       <div class="right-navigation hidden md:flex item-center justify-end gap-4">
@@ -79,12 +80,16 @@ const navigationButtonClass =
               <CrossIcon />
             </button>
           </div>
-          <button :class="navigationButtonClass"><HomeIcon />Home</button>
-          <button :class="navigationButtonClass"><ShopIcon />Shop</button>
-          <button :class="navigationButtonClass"><AboutIcon />About</button>
-          <button :class="navigationButtonClass"><CartIcon />Cart</button>
-          <button :class="navigationButtonClass"><OrderIcon />Orders</button>
-          <button :class="navigationButtonClass"><ProfileIcon />Profile</button>
+          <RouterLink @click="closeMenu" to="/" :class="navigationButtonClass"
+            ><HomeIcon />Home</RouterLink
+          >
+          <RouterLink @click="closeMenu" to="/shop" :class="navigationButtonClass"
+            ><ShopIcon />Shop</RouterLink
+          >
+          <RouterLink :class="navigationButtonClass"><AboutIcon />About</RouterLink>
+          <RouterLink :class="navigationButtonClass"><CartIcon />Cart</RouterLink>
+          <RouterLink :class="navigationButtonClass"><OrderIcon />Orders</RouterLink>
+          <RouterLink :class="navigationButtonClass"><ProfileIcon />Profile</RouterLink>
         </div>
       </div>
     </div>

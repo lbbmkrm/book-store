@@ -22,7 +22,7 @@ const testimonials = ref([
 ])
 </script>
 <template>
-  <section class="mb-8 md:mb-24 flex mt-24 md:mt-0">
+  <section class="flex mt-24 md:mt-0">
     <div class="container w-[90%] md:w-[75%] mx-auto">
       <div class="text-center mb-8">
         <h3 class="text-2xl font-bold text-gray-800 font-serif">Apa Kata Pembaca</h3>
