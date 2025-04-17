@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 const heroImage = ref('/assets/img/hero.jpg')
 </script>
 <template>
@@ -15,16 +16,18 @@ const heroImage = ref('/assets/img/hero.jpg')
           baru dalam setiap halaman.
         </p>
         <div class="flex gap-3">
-          <button
+          <RouterLink
+            to="/shop"
             class="px-6 py-3 cursor-pointer shadow-md bg-indigo-700 text-white rounded hover:bg-indigo-500"
           >
             Jelajahi Koleksi
-          </button>
-          <button
+          </RouterLink>
+          <RouterLink
+            to="#topBooks"
             class="px-6 py-3 cursor-pointer shadow-md bg-slate-50 text-gray-800 rounded hover:bg-slate-200"
           >
             Buku Terbaik
-          </button>
+          </RouterLink>
         </div>
       </div>
       <!-- right content -->

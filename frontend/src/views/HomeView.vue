@@ -8,7 +8,7 @@ import WhyChooseUsSection from '@/components/WhyChooseUsSection.vue'
 <template>
   <main>
     <HeroSection />
-    <TopBookSection />
+    <TopBookSection id="topBooks" />
     <WhyChooseUsSection />
     <TestimonialsSection />
   </main>

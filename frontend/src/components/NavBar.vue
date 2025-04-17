@@ -37,9 +37,9 @@ const navigationButtonClass =
       </div>
       <!-- Right Nav -->
       <div class="right-navigation hidden md:flex item-center justify-end gap-4">
-        <button :class="navigationButtonClass">
+        <RouterLink to="/cart" :class="navigationButtonClass">
           <CartIcon />
-        </button>
+        </RouterLink>
         <button :class="navigationButtonClass">
           <OrderIcon />
         </button>
@@ -80,16 +80,24 @@ const navigationButtonClass =
               <CrossIcon />
             </button>
           </div>
-          <RouterLink @click="closeMenu" to="/" :class="navigationButtonClass"
+          <RouterLink to="/" @click="closeMenu" :class="navigationButtonClass"
             ><HomeIcon />Home</RouterLink
           >
-          <RouterLink @click="closeMenu" to="/shop" :class="navigationButtonClass"
+          <RouterLink to="/shop" @click="closeMenu" :class="navigationButtonClass"
             ><ShopIcon />Shop</RouterLink
           >
-          <RouterLink :class="navigationButtonClass"><AboutIcon />About</RouterLink>
-          <RouterLink :class="navigationButtonClass"><CartIcon />Cart</RouterLink>
-          <RouterLink :class="navigationButtonClass"><OrderIcon />Orders</RouterLink>
-          <RouterLink :class="navigationButtonClass"><ProfileIcon />Profile</RouterLink>
+          <RouterLink @click="closeMenu" :class="navigationButtonClass"
+            ><AboutIcon />About</RouterLink
+          >
+          <RouterLink to="/cart" @click="closeMenu" :class="navigationButtonClass"
+            ><CartIcon />Cart</RouterLink
+          >
+          <RouterLink @click="closeMenu" :class="navigationButtonClass"
+            ><OrderIcon />Orders</RouterLink
+          >
+          <RouterLink @click="closeMenu" :class="navigationButtonClass"
+            ><ProfileIcon />Profile</RouterLink
+          >
         </div>
       </div>
     </div>
