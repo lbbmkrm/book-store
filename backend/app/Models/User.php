@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -23,13 +24,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'img',
-        'is_admin'
+        'is_admin',
+        'address',
+        'phone',
     ];
 
-    public function carts(): HasMany
+    public function cart(): HasOne
     {
-        return $this->hasMany(Cart::class, 'user_id', 'id');
+        return $this->hasOne(Cart::class, 'user_id', 'id');
     }
     public function orders(): HasMany
     {

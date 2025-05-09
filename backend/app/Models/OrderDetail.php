@@ -14,6 +14,8 @@ class OrderDetail extends Model
         'quantity'
     ];
 
+    public $timestamps = false;
+
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');

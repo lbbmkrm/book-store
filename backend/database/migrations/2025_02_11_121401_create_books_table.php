@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('author');
             $table->text('description')->nullable();
-            $table->integer('stock');
+            $table->integer('stock')->default(0);
             $table->decimal('price', 10, 2);
             $table->string('img')->nullable();
             $table->timestamps();

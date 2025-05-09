@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Book extends Model
 {
     protected $fillable = [
-        'category_id',
         'title',
+        'category_id',
         'author',
         'description',
         'stock',
         'price',
-        'img'
+        'img',
     ];
 
     public function category(): BelongsTo

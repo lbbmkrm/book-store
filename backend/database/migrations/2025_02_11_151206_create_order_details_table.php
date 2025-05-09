@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('book_id')->constrained('books', 'id')->onDelete('cascade');
             $table->integer('quantity');
             $table->decimal('price', 10, 2);
-            $table->timestamps();
+            $table->timestamp('updated_at');
         });
     }
 
