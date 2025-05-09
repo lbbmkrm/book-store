@@ -12,6 +12,8 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/products', [BookController::class, 'index']);
 Route::get('/products/{id}', [BookController::class, 'show']);
+Route::get('/categories', [BookController::class, 'categories']);
+Route::get('/top-products', [BookController::class, 'topProducts']);
 
 
 Route::middleware('auth:sanctum')->group(function () {

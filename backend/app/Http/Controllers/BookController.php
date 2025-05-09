@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\BookResource;
+use App\Http\Resources\CategoryResource;
 use App\Models\Book;
+use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +18,7 @@ class BookController extends Controller
         return BookResource::collection($books);
     }
 
-    public function show($id): JsonResource
+    public function show($id)
     {
         $book = Book::find($id);
         if (!$book) {
@@ -25,5 +28,17 @@ class BookController extends Controller
         }
 
         return new BookResource($book);
+    }
+
+    public function categories()
+    {
+        $categories = Category::all();
+        return  CategoryResource::collection($categories);
+    }
+
+    public function topProducts()
+    {
+        $products = Book::orderBy('stock', 'asc')->take(4)->get();
+        return BookResource::collection($products);
     }
 }
