@@ -14,7 +14,7 @@ Route::get('/products', [BookController::class, 'index']);
 Route::get('/categories', [CategoryController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout/{id}', [AuthController::class, 'logout']);
 
     Route::get('/cart', [CartController::class, 'index']);
     Route::post('/cart', [CartController::class, 'store']);

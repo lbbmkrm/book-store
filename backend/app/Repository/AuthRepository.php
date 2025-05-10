@@ -13,9 +13,14 @@ class AuthRepository
         $this->model = $user;
     }
 
-    public function me(): User
+    public function getUserById(int $id): ?User
     {
-        return Auth::user();
+        return $this->model->find($id);
+    }
+
+    public function getUserByEmail(string $email): ?User
+    {
+        return $this->model->where('email', $email)->first();
     }
 
     public function register(array $credentials): User
@@ -31,9 +36,8 @@ class AuthRepository
         ]);
     }
 
-    public function logout(): void
+    public function logout(User $user): void
     {
-        $user = $this->me();
         $user->tokens()->delete();
     }
 }

@@ -35,4 +35,40 @@ class AuthService
             throw new Exception('failed register', 500);
         }
     }
+
+    public function login(array $credentials): ?array
+    {
+        try {
+            if (!$this->authRepo->login($credentials)) {
+                throw new Exception('invalid credentials', 401);
+            };
+            $user = $this->authRepo->getUserByEmail($credentials['email']);
+            $token = $user->createToken('authentication_token')->plainTextToken;
+            return [
+                'token' => $token,
+                'user' => $user
+            ];
+        } catch (Exception $e) {
+            throw new Exception(
+                $e->getMessage() ?: 'failed to login',
+                $e->getCode() ?: 500
+            );
+        }
+    }
+
+    public function logout(int $userId)
+    {
+        try {
+            $user = $this->authRepo->getUserById($userId);
+            if (!$user) {
+                throw new Exception('user not found', 404);
+            }
+            $this->authRepo->logout($user);
+        } catch (Exception $e) {
+            throw new Exception(
+                $e->getMessage() ?: 'failed logout',
+                $e->getCode() ?: 500
+            );
+        }
+    }
 }
