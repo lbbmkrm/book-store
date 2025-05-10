@@ -1,31 +1,28 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 
-Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/products', [BookController::class, 'index']);
-Route::get('/products/{id}', [BookController::class, 'show']);
-Route::get('/categories', [BookController::class, 'categories']);
-Route::get('/top-products', [BookController::class, 'topProducts']);
-
+Route::get('/categories', [CategoryController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/cart', [CartController::class, 'index']);
-    Route::post('/cart/add', [CartController::class, 'store']);
-    Route::patch('/cart/increase/{id}', [CartController::class, 'incrementQuantity']);
-    Route::patch('/cart/decrease/{id}', [CartController::class, 'decrementQuantity']);
-    Route::delete('/cart/remove/{id}', [CartController::class, 'removeFromCart']);
-    Route::delete('/cart/clear', [CartController::class, 'clearCart']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::post('/cart', [CartController::class, 'store']);
+    Route::put('/cart/{cartDetail}', [CartController::class, 'update']);
+    Route::delete('/cart/{cartDetail}', [CartController::class, 'destroy']);
+
+    Route::post('/orders', [OrderController::class, 'store']);
 
     Route::get('/orders', [OrderController::class, 'index']);
-    Route::get('/orders/{id}', [OrderController::class, 'show']);
-    Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/orders/{order}', [OrderController::class, 'show']);
 });

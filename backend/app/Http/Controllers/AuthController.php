@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Service\AuthService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +14,11 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    private AuthService $authService;
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -41,41 +49,20 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validated = Validator::make($request->all(), [
-            'name' => 'required|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-            'img' => 'nullable|image'
-        ]);
-
-        if ($validated->fails()) {
+        $validatedReq = $request->validated();
+        try {
+            $data = $this->authService->register($validatedReq);
             return response()->json([
-                'message' => 'Validation error',
-                'error' => $validated->errors()
-            ], 422);
+                'message' => 'success register',
+                'token' => $data['token'],
+                'user' => $data['user']
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode());
         }
-
-        $imagePath =  '';
-        if ($request->hasFile('img')) {
-            $imagePath = $request->file('img')->store('public/images');
-        }
-
-        $user = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'img' => $imagePath
-        ]);
-        $user->save();
-
-        $token = $user->createToken('authToken')->plainTextToken;
-
-        return response()->json([
-            'message' => 'User registered successfully',
-            'user' => new UserResource($user),
-            'token' => $token
-        ], 201);
     }
 }
