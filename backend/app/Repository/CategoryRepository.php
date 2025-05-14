@@ -36,12 +36,8 @@ class CategoryRepository
         return $category;
     }
 
-    public function delete(Category $category): void
+    public function delete(Category $category): ?bool
     {
-        try {
-            $category->delete();
-        } catch (QueryException $e) {
-            throw new Exception($e->getMessage(), 500);
-        }
+        return $category->delete();
     }
 }

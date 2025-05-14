@@ -7,14 +7,11 @@ use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Service\CategoryService;
 use Exception;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    use AuthorizesRequests;
     private CategoryService $categoryService;
     public function __construct(CategoryService $categoryService)
     {
@@ -72,8 +69,6 @@ class CategoryController extends Controller
     {
         $validatedRequest = $request->validated();
         try {
-            $category = $this->categoryService->get($id);
-            $this->authorize('update', $category);
             $updatedCategory = $this->categoryService->updateCategory($id, $validatedRequest);
             return response()->json([
                 'message' => 'success',
@@ -89,17 +84,11 @@ class CategoryController extends Controller
     public function delete(int $id): JsonResponse
     {
         try {
-            $category = $this->categoryService->get($id);
-            $this->authorize('delete', $category);
             $this->categoryService->categoryDelete($id);
 
             return response()->json([
                 'message' => 'success'
             ]);
-        } catch (AuthorizationException $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 403);
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage()

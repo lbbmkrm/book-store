@@ -7,6 +7,7 @@ use App\Repository\CategoryRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class CategoryService
@@ -45,7 +46,7 @@ class CategoryService
         try {
 
             if (isset($requestData['img'])) {
-                $requestData['img'] = $requestData['img']->store('image/category', 'public');
+                $requestData['img'] = $requestData['img']->store('image/categories', 'public');
             } else {
                 $requestData['img'] = null;
             }
@@ -63,6 +64,9 @@ class CategoryService
     {
         $category = $this->get($categoryId);
         try {
+            if (Gate::denies('update', $category)) {
+                throw new Exception('unauthorized', 403);
+            }
             if (isset($requestData['img'])) {
                 if ($category->img) {
                     Storage::disk('public')->delete($category->img);
@@ -84,10 +88,14 @@ class CategoryService
     {
         $category = $this->get($categoryId);
         try {
+            if (Gate::denies('delete', $category)) {
+                throw new Exception('unauthorized', 403);
+            }
             DB::beginTransaction();
             $this->categoryRepo->delete($category);
             DB::commit();
         } catch (Exception $e) {
+            DB::rollBack();
             throw new Exception('failed to delete', 500);
         }
     }
