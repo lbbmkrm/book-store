@@ -4,18 +4,19 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Cart;
-use App\Models\CartDetail;
+use App\Models\User;
 
 class CartSeeder extends Seeder
 {
     public function run()
     {
-        $cart = Cart::create(['user_id' => 2]); // John Doe
+        $user = User::where('email', 'budi.santoso@example.com')->first();
 
-        CartDetail::create([
-            'cart_id' => $cart->id,
-            'book_id' => 1,
-            'quantity' => 2
+        Cart::insert([
+            [
+                'user_id' => $user->id,
+                'created_at' => now(),
+            ]
         ]);
     }
 }

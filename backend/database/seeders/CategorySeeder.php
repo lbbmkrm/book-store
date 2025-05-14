@@ -9,9 +9,37 @@ class CategorySeeder extends Seeder
 {
     public function run()
     {
-        $categories = ['Fiction', 'Non-fiction', 'Technology', 'Science'];
-        foreach ($categories as $category) {
-            Category::create(['name' => $category]);
-        }
+        Category::insert([
+            [
+                'name' => 'Fiksi',
+                'img' => 'fiksi.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Non-Fiksi',
+                'img' => 'nonfiksi.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Pendidikan',
+                'img' => 'pendidikan.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Komik',
+                'img' => 'komik.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Anak-Anak',
+                'img' => 'anak-anak.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
     }
 }

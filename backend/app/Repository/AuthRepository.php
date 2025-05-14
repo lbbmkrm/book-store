@@ -15,7 +15,7 @@ class AuthRepository
 
     public function getUserById(int $id): ?User
     {
-        return $this->model->find($id);
+        return $this->model->findOrFail($id);
     }
 
     public function getUserByEmail(string $email): ?User

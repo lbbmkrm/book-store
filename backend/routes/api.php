@@ -3,23 +3,32 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/products', [BookController::class, 'index']);
-Route::get('/categories', [CategoryController::class, 'index']);
+Route::controller(BookController::class)->group(function () {
+    Route::get('/books', 'index');
+    Route::get('/books/{id}', 'show');
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout/{id}', [AuthController::class, 'logout']);
 
-    Route::get('/cart', [CartController::class, 'index']);
-    Route::post('/cart', [CartController::class, 'store']);
-    Route::put('/cart/{cartDetail}', [CartController::class, 'update']);
-    Route::delete('/cart/{cartDetail}', [CartController::class, 'destroy']);
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('/categories', 'index');
+        Route::get('/categories/{id}', 'show');
+        Route::post('/categories', 'create');
+        Route::patch('/categories/{id}', 'update');
+        Route::delete('/categories/{id}', 'delete');
+    });
+    Route::get('/carts', [CartController::class, 'index']);
+    Route::post('/carts', [CartController::class, 'store']);
+    Route::put('/carts/{cartDetail}', [CartController::class, 'update']);
+    Route::delete('/carts/{cartDetail}', [CartController::class, 'destroy']);
 
     Route::post('/orders', [OrderController::class, 'store']);
 

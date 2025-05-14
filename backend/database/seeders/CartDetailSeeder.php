@@ -2,16 +2,26 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\CartDetail;
+use App\Models\Cart;
+use App\Models\Book;
 
 class CartDetailSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        //
+        $cart = Cart::first();  // Ambil keranjang pertama
+        $book = Book::where('title', 'Novel Aksi')->first();  // Ambil buku pertama
+
+        CartDetail::insert([
+            [
+                'cart_id' => $cart->id,
+                'book_id' => $book->id,
+                'quantity' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        ]);
     }
 }

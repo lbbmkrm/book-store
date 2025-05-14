@@ -4,41 +4,48 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\BookResource;
 use App\Http\Resources\CategoryResource;
-use App\Models\Book;
-use App\Models\Category;
+use App\Service\BookService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
+
+use function PHPUnit\Framework\isEmpty;
 
 class BookController extends Controller
 {
-    public function index(): JsonResource
+    private BookService $bookService;
+    public function __construct(BookService $bookService)
     {
-        $books = Book::all();
-        return BookResource::collection($books);
+        $this->bookService = $bookService;
     }
-
-    public function show($id)
+    public function index(): JsonResponse
     {
-        $book = Book::find($id);
-        if (!$book) {
+        try {
+            $books = $this->bookService->getAllBooks();
+            $message = $books->isEmpty() ? 'no books' : 'success';
             return response()->json([
-                'message' => 'Book not avaible'
-            ], 404);
+                'message' => $message,
+                'books' => BookResource::collection($books)
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode());
         }
-
-        return new BookResource($book);
     }
 
-    public function categories()
+    public function show(int $id): JsonResponse
     {
-        $categories = Category::all();
-        return  CategoryResource::collection($categories);
-    }
-
-    public function topProducts()
-    {
-        $products = Book::orderBy('stock', 'asc')->take(4)->get();
-        return BookResource::collection($products);
+        try {
+            $book = $this->bookService->getBook($id);
+            return response()->json([
+                'message' => 'success',
+                'book' => new BookResource($book)
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode());
+        }
     }
 }
