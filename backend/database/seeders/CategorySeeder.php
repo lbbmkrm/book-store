@@ -35,8 +35,8 @@ class CategorySeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Anak-Anak',
-                'img' => 'anak-anak.jpg',
+                'name' => 'Novel',
+                'img' => '',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

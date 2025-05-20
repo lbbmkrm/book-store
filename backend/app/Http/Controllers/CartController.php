@@ -2,137 +2,106 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CartResource;
+use Exception;
 use App\Models\Cart;
-use App\Models\CartDetail;
-use Illuminate\Http\JsonResponse;
+use App\Service\CartService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
+use function App\Helpers\getCurrentUser;
+use App\Http\Resources\Cart\CartResource;
+use App\Http\Requests\Cart\AddCartItemRequest;
+use App\Http\Resources\Cart\CartDetailResource;
+use App\Http\Requests\Cart\UpdateCartItemRequest;
 
 class CartController extends Controller
 {
-    /**
-     * Menampilkan isi cart user.
-     */
-    public function index(): JsonResource|JsonResponse
+    private CartService $cartService;
+    public function __construct(CartService $cartService)
     {
-        $cart = Cart::where('user_id', Auth::id())->with('cartDetails.book')->first();
-        if (!$cart || $cart->cartDetails->isEmpty()) {
-            return response()->json(['message' => 'Cart is empty'], 200);
+        $this->cartService = $cartService;
+    }
+    public function index(): JsonResponse
+    {
+        try {
+            $user =  getCurrentUser();
+            $cart = $this->cartService->getCart($user->id);
+            $this->isAuthorized('view', $cart);
+            return $this->successResponse(
+                'success retrieve cart',
+                new CartResource($cart)
+            );
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
         }
-
-        return new CartResource($cart);
     }
 
-    /**
-     * Menambahkan produk ke dalam cart.
-     */
-    public function store(Request $request): JsonResponse
+    public function store(AddCartItemRequest $request): JsonResponse
     {
-        $validate = Validator::make($request->all(), [
-            'book_id' => 'required|exists:books,id',
-            'quantity' => 'required|integer|min:1'
-        ]);
-
-        if ($validate->fails()) {
-            return response()->json([
-                'message' => 'Fail to add product to cart',
-                'errors' => $validate->errors()
-            ], 422);
+        try {
+            $validatedReq = $request->validated();
+            $user = getCurrentUser();
+            $cart = $this->cartService->getCart($user->id);
+            $this->isAuthorized('create', $cart);
+            $result = $this->cartService->addItem(
+                $user->id,
+                $validatedReq['book_id'],
+                $validatedReq['quantity']
+            );
+            $cart = $this->cartService->getCart($user->id);
+            return $this->successResponse(
+                $result['message'],
+                new CartResource($cart),
+                201
+            );
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
         }
-
-        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
-
-        $cartDetail = CartDetail::where('cart_id', $cart->id)
-            ->where('book_id', $request->book_id)
-            ->first();
-
-        if ($cartDetail) {
-            $cartDetail->increment('quantity', $request->quantity);
-        } else {
-            CartDetail::create([
-                'cart_id' => $cart->id,
-                'book_id' => $request->book_id,
-                'quantity' => $request->quantity
-            ]);
-        }
-
-        return response()->json(['message' => 'Product added to cart'], 201);
     }
 
-    /**
-     * Menambah jumlah produk dalam cart.
-     */
-    public function incrementQuantity($id): JsonResponse
+    public function update(UpdateCartItemRequest $request, int $cartDetailId): JsonResponse
     {
-        $cartDetail = CartDetail::whereHas('cart', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->where('id', $id)->first();
-
-        if (!$cartDetail) {
-            return response()->json(['message' => 'Item not found in cart'], 404);
+        try {
+            $user = getCurrentUser();
+            $cart = $this->cartService->getCart($user->id);
+            $this->isAuthorized('update', $cart);
+            $validatedReq = $request->validated();
+            $result = $this->cartService->updateItem($cartDetailId, $validatedReq['quantity']);
+            return $this->successResponse(
+                $result['message'],
+                new CartDetailResource($result['data'])
+            );
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
         }
-
-        $cartDetail->increment('quantity');
-
-        return response()->json(['message' => 'Quantity increased'], 200);
     }
 
-    /**
-     * Mengurangi jumlah produk dalam cart.
-     */
-    public function decrementQuantity($id): JsonResponse
+
+    public function destroy(int $cartDetailId): JsonResponse
     {
-        $cartDetail = CartDetail::whereHas('cart', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->where('id', $id)->first();
-
-        if (!$cartDetail) {
-            return response()->json(['message' => 'Item not found in cart'], 404);
+        try {
+            $user = getCurrentUser();
+            $cart = $this->cartService->getCart($user->id);
+            $this->isAuthorized('delete', $cart);
+            $result = $this->cartService->removeItem($cartDetailId);
+            return $this->successResponse(
+                $result['message'],
+                new CartResource($cart)
+            );
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
         }
-
-        if ($cartDetail->quantity > 1) {
-            $cartDetail->decrement('quantity');
-        } else {
-            $cartDetail->delete();
-        }
-
-        return response()->json(['message' => 'Quantity decreased'], 200);
     }
 
-    /**
-     * Menghapus produk dari cart.
-     */
-    public function removeFromCart($id): JsonResponse
+    public function clear(): JsonResponse
     {
-        $cartDetail = CartDetail::whereHas('cart', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->where('id', $id)->first();
-
-        if (!$cartDetail) {
-            return response()->json(['message' => 'Item not found in cart'], 404);
+        try {
+            $user = getCurrentUser();
+            $cart = $this->cartService->getCart($user->id);
+            $this->isAuthorized('delete', $cart);
+            $result = $this->cartService->clearCart($user->id);
+            return $this->successResponse($result['message']);
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
         }
-
-        $cartDetail->delete();
-
-        return response()->json(['message' => 'Item removed from cart'], 200);
-    }
-
-    /**
-     * Menghapus seluruh isi cart.
-     */
-    public function clearCart(): JsonResponse
-    {
-        $cart = Cart::where('user_id', Auth::id())->first();
-
-        if (!$cart || $cart->cartDetails->isEmpty()) {
-            return response()->json(['message' => 'Cart is already empty'], 200);
-        }
-
-        $cart->cartDetails()->delete();
-
-        return response()->json(['message' => 'Cart cleared'], 200);
     }
 }

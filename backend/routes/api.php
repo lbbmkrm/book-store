@@ -32,13 +32,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/books/{id}', 'delete');
     });
 
-    Route::get('/carts', [CartController::class, 'index']);
-    Route::post('/carts', [CartController::class, 'store']);
-    Route::put('/carts/{cartDetail}', [CartController::class, 'update']);
-    Route::delete('/carts/{cartDetail}', [CartController::class, 'destroy']);
+    Route::controller(CartController::class)->group(function () {
+        Route::get('/carts',  'index');
+        Route::post('/carts',  'store');
+        Route::put('/carts/{cartDetailId}',  'update');
+        Route::delete('/carts/{cartDetailId}',  'destroy');
+        Route::delete('/carts', 'clear');
+    });
 
     Route::post('/orders', [OrderController::class, 'store']);
-
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/{order}', [OrderController::class, 'show']);
 });

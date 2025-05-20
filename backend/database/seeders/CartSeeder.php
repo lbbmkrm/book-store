@@ -10,13 +10,24 @@ class CartSeeder extends Seeder
 {
     public function run()
     {
-        $user = User::where('email', 'budi.santoso@example.com')->first();
+        $users = User::all();
+        if ($users->isEmpty()) {
+            $this->command->info('No users found. Please seed the users table first.');
+            return;
+        }
 
-        Cart::insert([
-            [
+        foreach ($users as $user) {
+            $cartData = [
                 'user_id' => $user->id,
                 'created_at' => now(),
-            ]
-        ]);
+            ];
+
+            Cart::updateOrCreate(
+                ['user_id' => $user->id],
+                $cartData
+            );
+
+            $this->command->info("Cart created for user ID: {$user->id}");
+        }
     }
 }
