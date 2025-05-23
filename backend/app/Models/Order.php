@@ -13,7 +13,6 @@ class Order extends Model
         'total_price',
         'status',
         'shipping_address',
-        'delivery_method',
     ];
 
     public function user(): BelongsTo

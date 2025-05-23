@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 
 abstract class Controller
 {
@@ -17,7 +17,8 @@ abstract class Controller
         return response()->json([
             'success' => true,
             'message' => $message,
-            'data' => $data
+            'data' => $data,
+
         ], $code);
     }
 
@@ -32,6 +33,15 @@ abstract class Controller
         return response()->json([
             'message' => $exception->getMessage(),
         ], $code);
+    }
+
+    public function getCurrentUser(): ?User
+    {
+        $user = Auth::guard('sanctum')->user();
+        if (!$user) {
+            throw new Exception('unauthentiacted', 401);
+        }
+        return $user;
     }
 
     public function isAuthorized(string $ability, array|string $arguments)

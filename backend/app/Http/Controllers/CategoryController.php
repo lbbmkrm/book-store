@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use App\Service\CategoryService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -51,6 +52,7 @@ class CategoryController extends Controller
 
     public function create(CreateCategoryRequest $request): JsonResponse
     {
+        $this->isAuthorized('create', Category::class);
         $validatedRequest = $request->validated();
         try {
             $category = $this->categoryService->createCategory($validatedRequest);
@@ -67,6 +69,8 @@ class CategoryController extends Controller
 
     public function update(int $id, UpdateCategoryRequest $request): JsonResponse
     {
+        $category = $this->categoryService->get($id);
+        $this->isAuthorized('update', $category);
         $validatedRequest = $request->validated();
         try {
             $updatedCategory = $this->categoryService->updateCategory($id, $validatedRequest);
@@ -83,6 +87,8 @@ class CategoryController extends Controller
 
     public function delete(int $id): JsonResponse
     {
+        $category = $this->categoryService->get($id);
+        $this->isAuthorized('delete', $category);
         try {
             $this->categoryService->categoryDelete($id);
 

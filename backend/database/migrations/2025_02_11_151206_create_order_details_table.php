@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('order_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders', 'id')->onDelete('cascade');
-            $table->foreignId('book_id')->constrained('books', 'id')->onDelete('cascade');
+            $table->foreignId('book_id')->constrained('books', 'id')->onDelete('restrict');
             $table->integer('quantity');
             $table->decimal('price', 10, 2);
             $table->timestamp('updated_at');

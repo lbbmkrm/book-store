@@ -25,7 +25,10 @@ class BookService
             $books = $this->bookRepo->getAll();
             return $books;
         } catch (Exception $e) {
-            throw new Exception('failed to get books', 500);
+            throw new Exception(
+                $e->getMessage() ?: 'failed to get books',
+                $e->getCode() ?: 500
+            );
         }
     }
 
@@ -33,12 +36,12 @@ class BookService
     {
         try {
             $book =  $this->bookRepo->get($bookId);
-            if (!$book) {
-                throw new Exception('book not found', 404);
-            }
             return $book;
         } catch (Exception $e) {
-            throw new Exception($e->getMessage() ?: 'failed to get book', $e->getCode() ?: 500);
+            throw new Exception(
+                $e->getMessage() ?: 'failed to get book',
+                $e->getCode() ?: 500
+            );
         }
     }
 
@@ -55,7 +58,10 @@ class BookService
             DB::commit();
             return $newBook;
         } catch (Exception $e) {
-            throw new Exception('failed to create book', 500);
+            throw new Exception(
+                $e->getMessage() ?: 'failed to create book',
+                $e->getCode() ?: 500
+            );
         }
     }
 
@@ -63,23 +69,25 @@ class BookService
     {
         $book = $this->getBook($bookId);
         try {
-            if (Gate::denies('update', $book)) {
-                throw new Exception('unauthorized', 403);
-            }
             if (isset($requestData['img'])) {
                 if ($book->img) {
                     Storage::disk('public')->delete($book->img);
                 }
                 $requestData['img'] = $requestData['img']->store('image/books', 'public');
             }
-
+            if (isset($requestData['stock']) && $requestData['stock'] < 0) {
+                throw new Exception('Stock cannot be negative', 400);
+            }
             DB::beginTransaction();
             $updatedBook = $this->bookRepo->update($book, $requestData);
             DB::commit();
             return $updatedBook;
         } catch (Exception $e) {
             DB::rollBack();
-            throw new Exception($e->getMessage() ?: 'failed to update book', $e->getCode() ?: 500);
+            throw new Exception(
+                $e->getMessage() ?: 'failed to update book',
+                $e->getCode() ?: 500
+            );
         }
     }
 
@@ -95,7 +103,10 @@ class BookService
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
-            throw new Exception($e->getMessage() ?: 'failed delete book', $e->getCode() ?: 500);
+            throw new Exception(
+                $e->getMessage() ?: 'failed delete book',
+                $e->getCode() ?: 500
+            );
         }
     }
 }

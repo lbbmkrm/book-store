@@ -2,61 +2,66 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
+use App\Http\Resources\Order\OrderResource;
+use App\Http\Resources\Order\OrdersResource;
 use App\Models\Order;
-use App\Models\OrderDetail;
-use Illuminate\Http\Request;
+use App\Service\OrderService;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\OrderResource;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index()
+    private OrderService $orderService;
+    public function __construct(OrderService $orderService)
     {
-        $orders = Order::where('user_id', Auth::id())->latest()->get();
-        // dd($orders->toArray());
-        return response()->json(OrderResource::collection($orders));
+        $this->orderService = $orderService;
     }
 
-
-    public function show($id)
+    public function index(): JsonResponse
     {
-        $order = Order::where('user_id', Auth::id())->where('id', $id)->first();
-        if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
+        try {
+            $user = $this->getCurrentUser();
+            $orders = $this->orderService->getUserOrders($user->id);
+            $message = $orders->isEmpty() ? 'No orders found' : 'Success';
+            return $this->successResponse(
+                $message,
+                OrdersResource::collection($orders)
+            );
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
         }
-        return response()->json(new OrderResource($order));
     }
 
-    public function store()
+    public function show(int $id): JsonResponse
     {
-        $cart = Cart::where('user_id', Auth::id())->first();
-        if (!$cart || $cart->cartDetails->isEmpty()) {
-            return response()->json(['message' => 'Cart is empty'], 400);
+        try {
+            $this->isAuthorized('view', Order::class);
+            $order = $this->orderService->getOrder($id);
+            return $this->successResponse(
+                'Success',
+                new OrderResource($order)
+            );
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
         }
+    }
 
-        $order = Order::create([
-            'user_id' => Auth::id(),
-            'total_price' => $cart->cartDetails->sum(fn($item) => $item->book->price * $item->quantity),
-            'status' => 'processing'
-        ]);
-
-        foreach ($cart->cartDetails as $cartDetail) {
-            OrderDetail::create([
-                'order_id' => $order->id,
-                'book_id' => $cartDetail->book_id,
-                'quantity' => $cartDetail->quantity,
-                'price' => $cartDetail->book->price,
+    public function store(Request $request): JsonResponse
+    {
+        try {
+            $validatedRequest = $request->validate([
+                'shipping_address' => 'required|string|max:255'
             ]);
+            $user = $this->getCurrentUser();
+            $order = $this->orderService->createOrder($user->id, $validatedRequest);
+            return $this->successResponse(
+                'Success',
+                new OrderResource($order),
+                201
+            );
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
         }
-
-        $cart->cartDetails()->delete();
-        $cart->delete();
-
-        return response()->json([
-            'message' => 'Order created successfully',
-            'order' => new OrderResource($order)
-        ]);
     }
 }

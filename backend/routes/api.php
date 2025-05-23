@@ -16,7 +16,7 @@ Route::controller(BookController::class)->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout/{id}', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/categories', 'index');
@@ -35,12 +35,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CartController::class)->group(function () {
         Route::get('/carts',  'index');
         Route::post('/carts',  'store');
-        Route::put('/carts/{cartDetailId}',  'update');
-        Route::delete('/carts/{cartDetailId}',  'destroy');
+        Route::put('/carts/{id}',  'update');
+        Route::delete('/carts/{id}',  'destroy');
         Route::delete('/carts', 'clear');
     });
 
-    Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders', [OrderController::class, 'index']);
-    Route::get('/orders/{order}', [OrderController::class, 'show']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
+    Route::post('/orders', [OrderController::class, 'store']);
 });

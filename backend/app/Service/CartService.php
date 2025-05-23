@@ -39,8 +39,11 @@ class CartService
 
     public function addItem(int $userId, int $bookId, int $quantity): array
     {
-        DB::beginTransaction();
         try {
+            if ($quantity <= 0) {
+                throw new Exception('Quantity must be greater than 0', 400);
+            }
+            DB::beginTransaction();
             $cart = $this->getCart($userId);
 
             $existingDetail = $cart->cartDetails()->where('book_id', $bookId)->first();

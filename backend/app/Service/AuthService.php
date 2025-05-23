@@ -2,13 +2,15 @@
 
 namespace App\Service;
 
+use App\Models\User;
 use Exception;
 use App\Repository\AuthRepository;
 use Illuminate\Support\Facades\DB;
 
 class AuthService
 {
-    protected $authRepo;
+    protected AuthRepository $authRepo;
+
     public function __construct(AuthRepository $authRepository)
     {
         $this->authRepo = $authRepository;
@@ -19,20 +21,29 @@ class AuthService
         $data = [
             'name' => $requestData['name'],
             'email' => $requestData['email'],
-            'password' => bcrypt($requestData['password'])
+            'password' => bcrypt($requestData['password']),
+            'address' => $requestData['address'] ?? null,
+            'phone' => $requestData['phone'] ?? null,
+            'img' => $requestData['img'] ?? null,
         ];
+
         try {
             DB::beginTransaction();
             $newUser = $this->authRepo->register($data);
             DB::commit();
+
             $token = $newUser->createToken('authentication_token')->plainTextToken;
+
             return [
                 'token' => $token,
                 'user' => $newUser
             ];
         } catch (Exception $e) {
             DB::rollBack();
-            throw new Exception('failed register', 500);
+            throw new Exception(
+                $e->getMessage() ?: 'Failed to register.',
+                $e->getCode() ?: 500
+            );
         }
     }
 
@@ -40,33 +51,43 @@ class AuthService
     {
         try {
             if (!$this->authRepo->login($credentials)) {
-                throw new Exception('invalid credentials', 401);
-            };
+                throw new Exception('Invalid credentials.', 401);
+            }
+
             $user = $this->authRepo->getUserByEmail($credentials['email']);
+
+            if (!$user) {
+                throw new Exception('User not found after successful login.', 404);
+            }
+
             $token = $user->createToken('authentication_token')->plainTextToken;
+
             return [
                 'token' => $token,
                 'user' => $user
             ];
         } catch (Exception $e) {
             throw new Exception(
-                $e->getMessage() ?: 'failed to login',
+                $e->getMessage() ?: 'Failed to login.',
                 $e->getCode() ?: 500
             );
         }
     }
 
-    public function logout(int $userId)
+    public function logout(User $user): void
     {
+        /** @var \Laravel\Sanctum\PersonalAccessToken $token */
+        $token = $user->currentAccessToken();
+
+        if (!$token) {
+            throw new Exception('No active token found.', 400);
+        }
+
         try {
-            $user = $this->authRepo->getUserById($userId);
-            if (!$user) {
-                throw new Exception('user not found', 404);
-            }
-            $this->authRepo->logout($user);
+            $token->delete();
         } catch (Exception $e) {
             throw new Exception(
-                $e->getMessage() ?: 'failed logout',
+                $e->getMessage() ?: 'Failed to logout.',
                 $e->getCode() ?: 500
             );
         }

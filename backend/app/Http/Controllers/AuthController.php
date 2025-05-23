@@ -5,13 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
-use App\Models\User;
 use App\Service\AuthService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -21,21 +18,29 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
+    public function successResponse(string $message, $data = null, $token = null, int $code = 200): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'token' => $token,
+            'data' => new UserResource($data)
+        ], $code);
+    }
 
     public function register(RegisterRequest $request): JsonResponse
     {
         $validatedReq = $request->validated();
         try {
             $data = $this->authService->register($validatedReq);
-            return response()->json([
-                'message' => 'success register',
-                'token' => $data['token'],
-                'user' => new UserResource($data['user'])
-            ], 201);
+            return $this->successResponse(
+                'success register',
+                new UserResource($data['user']),
+                $data['token'],
+                201
+            );
         } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], $e->getCode());
+            return $this->failedResponse($e);
         }
     }
 
@@ -45,29 +50,24 @@ class AuthController extends Controller
         $validated = $request->validated();
         try {
             $data = $this->authService->login($validated);
-            return response()->json([
-                'message' => 'success login',
-                'token' => $data['token'],
-                'user' => new UserResource($data['user'])
-            ]);
+            return $this->successResponse(
+                'success login',
+                new UserResource($data['user']),
+                $data['token']
+            );
         } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], $e->getCode());
+            return $this->failedResponse($e);
         }
     }
 
-    public function logout(int $id)
+    public function logout(Request $request): JsonResponse
     {
         try {
-            $this->authService->logout($id);
-            return response()->json([
-                'message' => 'success logout',
-            ]);
+            $user = $this->getCurrentUser();
+            $this->authService->logout($user);
+            return $this->successResponse('success logout');
         } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], $e->getCode());
+            return $this->failedResponse($e);
         }
     }
 }

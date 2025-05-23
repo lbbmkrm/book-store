@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Resources\BookResource;
 use App\Http\Requests\Book\CreateBookRequest;
 use App\Http\Requests\Book\UpdateBookRequest;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Models\Book;
 
 class BookController extends Controller
 {
@@ -51,6 +51,7 @@ class BookController extends Controller
 
     public function create(CreateBookRequest $request): JsonResponse
     {
+        $this->isAuthorized('create', Book::class);
         $validatedRequest = $request->validated();
         try {
             $newBook = $this->bookService->createBook($validatedRequest);
@@ -67,6 +68,8 @@ class BookController extends Controller
 
     public function update(UpdateBookRequest $request, int $id): JsonResponse
     {
+        $book = $this->bookService->getBook($id);
+        $this->isAuthorized('update', $book);
         $validatedRequest = $request->validated();
         try {
             $updatedBook = $this->bookService->updateBook($id, $validatedRequest);
@@ -83,6 +86,8 @@ class BookController extends Controller
 
     public function delete(int $id): JsonResponse
     {
+        $book = $this->bookService->getBook($id);
+        $this->authorize('delete', $book);
         try {
             $this->bookService->deleteBook($id);
             return response()->json([

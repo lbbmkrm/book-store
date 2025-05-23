@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use App\Models\Cart;
 use App\Service\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use function App\Helpers\getCurrentUser;
 use App\Http\Resources\Cart\CartResource;
 use App\Http\Requests\Cart\AddCartItemRequest;
 use App\Http\Resources\Cart\CartDetailResource;
@@ -23,7 +21,7 @@ class CartController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $user =  getCurrentUser();
+            $user =  $this->getCurrentUser();
             $cart = $this->cartService->getCart($user->id);
             $this->isAuthorized('view', $cart);
             return $this->successResponse(
@@ -39,7 +37,7 @@ class CartController extends Controller
     {
         try {
             $validatedReq = $request->validated();
-            $user = getCurrentUser();
+            $user = $this->getCurrentUser();
             $cart = $this->cartService->getCart($user->id);
             $this->isAuthorized('create', $cart);
             $result = $this->cartService->addItem(
@@ -61,7 +59,7 @@ class CartController extends Controller
     public function update(UpdateCartItemRequest $request, int $cartDetailId): JsonResponse
     {
         try {
-            $user = getCurrentUser();
+            $user = $this->getCurrentUser();
             $cart = $this->cartService->getCart($user->id);
             $this->isAuthorized('update', $cart);
             $validatedReq = $request->validated();
@@ -79,7 +77,7 @@ class CartController extends Controller
     public function destroy(int $cartDetailId): JsonResponse
     {
         try {
-            $user = getCurrentUser();
+            $user = $this->getCurrentUser();
             $cart = $this->cartService->getCart($user->id);
             $this->isAuthorized('delete', $cart);
             $result = $this->cartService->removeItem($cartDetailId);
@@ -95,7 +93,7 @@ class CartController extends Controller
     public function clear(): JsonResponse
     {
         try {
-            $user = getCurrentUser();
+            $user = $this->getCurrentUser();
             $cart = $this->cartService->getCart($user->id);
             $this->isAuthorized('delete', $cart);
             $result = $this->cartService->clearCart($user->id);

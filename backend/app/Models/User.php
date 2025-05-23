@@ -27,6 +27,7 @@ class User extends Authenticatable
         'is_admin',
         'address',
         'phone',
+        'img'
     ];
 
     public function cart(): HasOne

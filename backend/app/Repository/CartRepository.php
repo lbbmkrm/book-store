@@ -16,31 +16,15 @@ class CartRepository
     {
         $this->model = $cart;
     }
-
-    /**
-     * Find a cart by user ID.
-     *
-     * @param int $id
-     * @return Cart|null
-     * @throws Exception
-     */
     public function findByUserId(int $id): ?Cart
     {
         try {
-            $cart = $this->model->where('user_id', $id)->first();
+            $cart = $this->model->with('cartDetails.book')->where('user_id', $id)->first();
             return $cart;
         } catch (Exception $e) {
             throw new Exception('Failed to get cart: ' . $e->getMessage(), 500);
         }
     }
-
-    /**
-     * Create a new cart.
-     *
-     * @param array $data
-     * @return Cart|null
-     * @throws Exception
-     */
     public function create(array $data): ?Cart
     {
         try {
@@ -57,15 +41,6 @@ class CartRepository
             throw new Exception('Failed to create cart: ' . $e->getMessage(), 500);
         }
     }
-
-    /**
-     * Delete duplicate carts for a user, keeping the specified cart.
-     *
-     * @param int $userId
-     * @param int $keepId
-     * @return void
-     * @throws Exception
-     */
     public function deleteDuplicates(int $userId, int $keepId): void
     {
         try {
