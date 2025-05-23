@@ -17,6 +17,7 @@ class SimpleBookResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'category' => $this->category->name,
             'stock' => $this->stock,
             'price' => $this->price
         ];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Service\BookService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\BookResource;
@@ -13,6 +14,7 @@ use App\Models\Book;
 
 class BookController extends Controller
 {
+    use AuthorizesRequests;
     private BookService $bookService;
     public function __construct(BookService $bookService)
     {
@@ -51,52 +53,42 @@ class BookController extends Controller
 
     public function create(CreateBookRequest $request): JsonResponse
     {
-        $this->isAuthorized('create', Book::class);
-        $validatedRequest = $request->validated();
         try {
-            $newBook = $this->bookService->createBook($validatedRequest);
-            return response()->json([
-                'message' => 'success',
-                'newBook' => new BookResource($newBook)
-            ], 201);
+            $validatedRequest = $request->validated();
+            $this->authorize('create', Book::class);
+            $book = $this->bookService->createBook($validatedRequest);
+            return $this->successResponse(
+                'Book created successfully',
+                new BookResource($book),
+                201
+            );
         } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], $e->getCode());
+            return $this->failedResponse($e);
         }
     }
 
     public function update(UpdateBookRequest $request, int $id): JsonResponse
     {
-        $book = $this->bookService->getBook($id);
-        $this->isAuthorized('update', $book);
-        $validatedRequest = $request->validated();
         try {
+            $book = $this->bookService->getBook($id);
+            $this->authorize('update', $book);
+            $validatedRequest = $request->validated();
             $updatedBook = $this->bookService->updateBook($id, $validatedRequest);
-            return response()->json([
-                'message' => 'success',
-                'book' => new BookResource($updatedBook)
-            ]);
+            return $this->successResponse('Book updated successfully', new BookResource($updatedBook));
         } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], $e->getCode());
+            return $this->failedResponse($e);
         }
     }
 
     public function delete(int $id): JsonResponse
     {
-        $book = $this->bookService->getBook($id);
-        $this->authorize('delete', $book);
         try {
+            $book = $this->bookService->getBook($id);
+            $this->authorize('delete', $book);
             $this->bookService->deleteBook($id);
-            return response()->json([
-                'message' => 'success delete book'
-            ]);
+            return $this->successResponse('Book deleted successfully');
         } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], $e->getCode());
+            return $this->failedResponse($e);
         }
     }
 }

@@ -7,11 +7,13 @@ use App\Http\Resources\Order\OrdersResource;
 use App\Models\Order;
 use App\Service\OrderService;
 use Exception;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    use AuthorizesRequests;
     private OrderService $orderService;
     public function __construct(OrderService $orderService)
     {
@@ -36,7 +38,7 @@ class OrderController extends Controller
     public function show(int $id): JsonResponse
     {
         try {
-            $this->isAuthorized('view', Order::class);
+            $this->authorize('view', Order::class);
             $order = $this->orderService->getOrder($id);
             return $this->successResponse(
                 'Success',

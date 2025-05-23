@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use App\Service\AuthService;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Resources\UserResource;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Resources\UserResource;
-use App\Service\AuthService;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -60,12 +60,12 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request): JsonResponse
+    public function logout(): JsonResponse
     {
         try {
             $user = $this->getCurrentUser();
             $this->authService->logout($user);
-            return $this->successResponse('success logout');
+            return $this->successResponse('Success logout');
         } catch (Exception $e) {
             return $this->failedResponse($e);
         }

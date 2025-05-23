@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Models\Cart;
 use Exception;
 use Illuminate\Database\Eloquent\MassAssignmentException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 
 class CartRepository

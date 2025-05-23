@@ -10,26 +10,18 @@ class CartDetailPolicy
 {
 
     /**
-     * Determine whether the user can view the model.
+     * Determine whether the user can update the cart detail.
      */
-    public function view(User $user, CartDetail $cartDetail): bool
+    public function update(User $user, CartDetail $cartDetail)
     {
-        return $user->id === $cartDetail->user_id;
+        return $user->id === $cartDetail->cart->user_id;
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Determine whether the user can delete the cart detail.
      */
-    public function update(User $user, CartDetail $cartDetail): bool
+    public function delete(User $user, CartDetail $cartDetail)
     {
-        return $user->id === $cartDetail->user_id;;
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, CartDetail $cartDetail): bool
-    {
-        return $user->id === $cartDetail->user_id;;
+        return $user->id === $cartDetail->cart->user_id;
     }
 }

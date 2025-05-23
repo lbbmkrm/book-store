@@ -15,11 +15,12 @@ Route::controller(BookController::class)->group(function () {
     Route::get('/books/{id}', 'show');
 });
 
+Route::get('/categories', [CategoryController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::controller(CategoryController::class)->group(function () {
-        Route::get('/categories', 'index');
         Route::get('/categories/{id}', 'show');
         Route::post('/categories', 'create');
         Route::patch('/categories/{id}', 'update');
@@ -35,8 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CartController::class)->group(function () {
         Route::get('/carts',  'index');
         Route::post('/carts',  'store');
-        Route::put('/carts/{id}',  'update');
-        Route::delete('/carts/{id}',  'destroy');
+        Route::put('/carts/{cartDetailId}',  'update');
+        Route::delete('/carts/{cartDetailId}',  'destroy');
         Route::delete('/carts', 'clear');
     });
 
@@ -44,3 +45,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders/{id}', [OrderController::class, 'show']);
     Route::post('/orders', [OrderController::class, 'store']);
 });
+Route::put('/cart/{cartDetailId}', [CartController::class, 'update'])->middleware('auth:sanctum');

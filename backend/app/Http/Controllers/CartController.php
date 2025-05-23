@@ -3,29 +3,32 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\Cart;
 use App\Service\CartService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\Cart\CartResource;
 use App\Http\Requests\Cart\AddCartItemRequest;
-use App\Http\Resources\Cart\CartDetailResource;
 use App\Http\Requests\Cart\UpdateCartItemRequest;
 
 class CartController extends Controller
 {
+    use AuthorizesRequests;
     private CartService $cartService;
+
     public function __construct(CartService $cartService)
     {
         $this->cartService = $cartService;
     }
+
     public function index(): JsonResponse
     {
         try {
-            $user =  $this->getCurrentUser();
+            $user = $this->getCurrentUser();
             $cart = $this->cartService->getCart($user->id);
-            $this->isAuthorized('view', $cart);
             return $this->successResponse(
-                'success retrieve cart',
+                'Cart retrieved successfully',
                 new CartResource($cart)
             );
         } catch (Exception $e) {
@@ -38,16 +41,13 @@ class CartController extends Controller
         try {
             $validatedReq = $request->validated();
             $user = $this->getCurrentUser();
-            $cart = $this->cartService->getCart($user->id);
-            $this->isAuthorized('create', $cart);
-            $result = $this->cartService->addItem(
+            $cart = $this->cartService->addItem(
                 $user->id,
                 $validatedReq['book_id'],
                 $validatedReq['quantity']
             );
-            $cart = $this->cartService->getCart($user->id);
             return $this->successResponse(
-                $result['message'],
+                'Cart item added successfully',
                 new CartResource($cart),
                 201
             );
@@ -59,30 +59,27 @@ class CartController extends Controller
     public function update(UpdateCartItemRequest $request, int $cartDetailId): JsonResponse
     {
         try {
-            $user = $this->getCurrentUser();
-            $cart = $this->cartService->getCart($user->id);
-            $this->isAuthorized('update', $cart);
+            $cartDetail = $this->cartService->getCartDetail($cartDetailId);
+            $this->authorize('update', $cartDetail);
             $validatedReq = $request->validated();
-            $result = $this->cartService->updateItem($cartDetailId, $validatedReq['quantity']);
+            $cart = $this->cartService->updateItem($cartDetailId, $validatedReq['quantity']);
             return $this->successResponse(
-                $result['message'],
-                new CartDetailResource($result['data'])
+                'Cart item updated successfully',
+                new CartResource($cart)
             );
         } catch (Exception $e) {
             return $this->failedResponse($e);
         }
     }
 
-
     public function destroy(int $cartDetailId): JsonResponse
     {
         try {
-            $user = $this->getCurrentUser();
-            $cart = $this->cartService->getCart($user->id);
-            $this->isAuthorized('delete', $cart);
-            $result = $this->cartService->removeItem($cartDetailId);
+            $cartDetail = $this->cartService->getCartDetail($cartDetailId);
+            $this->authorize('delete', $cartDetail);
+            $cart = $this->cartService->removeItem($cartDetailId);
             return $this->successResponse(
-                $result['message'],
+                'Cart item removed successfully',
                 new CartResource($cart)
             );
         } catch (Exception $e) {
@@ -95,9 +92,12 @@ class CartController extends Controller
         try {
             $user = $this->getCurrentUser();
             $cart = $this->cartService->getCart($user->id);
-            $this->isAuthorized('delete', $cart);
-            $result = $this->cartService->clearCart($user->id);
-            return $this->successResponse($result['message']);
+            $this->authorize('delete', $cart);
+            $cart = $this->cartService->clearCart($user->id);
+            return $this->successResponse(
+                'Cart cleared successfully',
+                new CartResource($cart)
+            );
         } catch (Exception $e) {
             return $this->failedResponse($e);
         }
