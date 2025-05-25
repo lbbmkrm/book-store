@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 abstract class Controller
 {
+    use AuthorizesRequests;
     public function successResponse(string $message,  $data = null, int $code = 200): JsonResponse
     {
         return response()->json([
@@ -40,5 +43,14 @@ abstract class Controller
             throw new Exception('unauthentiacted', 401);
         }
         return $user;
+    }
+
+    public function isAuthorized($ability, $arguments = [])
+    {
+        try {
+            $this->authorize($ability, $arguments);
+        } catch (AuthorizationException $e) {
+            throw new Exception('Unauthorized', 403);
+        }
     }
 }

@@ -41,7 +41,7 @@ class OrderService
     public function getOrder(int $orderId): ?Order
     {
         try {
-            return $this->getOrder($orderId);
+            return $this->orderRepo->get($orderId);
         } catch (Exception $e) {
             throw new Exception(
                 $e->getMessage() ?: 'failed to retrieve order',
@@ -73,7 +73,8 @@ class OrderService
             $order = $this->orderRepo->create([
                 'user_id' => $userId,
                 'total_price' => $totalPrice,
-                'shipping_address' => $requestData['shipping_address']
+                'shipping_address' => $requestData['shipping_address'],
+                'status' => 'processing'
             ]);
 
             foreach ($cart->cartDetails as $detail) {

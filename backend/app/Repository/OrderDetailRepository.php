@@ -23,7 +23,7 @@ class OrderDetailRepository
         } catch (MassAssignmentException $e) {
             throw new Exception('Invalid data provided', 422);
         } catch (QueryException $e) {
-            throw new Exception('Failed to create order due to a database error.', 500);
+            throw new Exception($e->getMessage(), 500);
         } catch (Exception $e) {
             throw new Exception('Failed to create order detail: ', 500);
         }

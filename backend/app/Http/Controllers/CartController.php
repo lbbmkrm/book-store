@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use App\Models\Cart;
 use App\Service\CartService;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\Cart\CartResource;
 use App\Http\Requests\Cart\AddCartItemRequest;
@@ -14,7 +11,6 @@ use App\Http\Requests\Cart\UpdateCartItemRequest;
 
 class CartController extends Controller
 {
-    use AuthorizesRequests;
     private CartService $cartService;
 
     public function __construct(CartService $cartService)
@@ -60,7 +56,7 @@ class CartController extends Controller
     {
         try {
             $cartDetail = $this->cartService->getCartDetail($cartDetailId);
-            $this->authorize('update', $cartDetail);
+            $this->isAuthorized('update', $cartDetail);
             $validatedReq = $request->validated();
             $cart = $this->cartService->updateItem($cartDetailId, $validatedReq['quantity']);
             return $this->successResponse(
@@ -76,7 +72,7 @@ class CartController extends Controller
     {
         try {
             $cartDetail = $this->cartService->getCartDetail($cartDetailId);
-            $this->authorize('delete', $cartDetail);
+            $this->isAuthorized('delete', $cartDetail);
             $cart = $this->cartService->removeItem($cartDetailId);
             return $this->successResponse(
                 'Cart item removed successfully',
@@ -92,7 +88,7 @@ class CartController extends Controller
         try {
             $user = $this->getCurrentUser();
             $cart = $this->cartService->getCart($user->id);
-            $this->authorize('delete', $cart);
+            $this->isAuthorized('delete', $cart);
             $cart = $this->cartService->clearCart($user->id);
             return $this->successResponse(
                 'Cart cleared successfully',

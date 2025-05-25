@@ -31,10 +31,10 @@ class OrderRepository
         }
     }
 
-    public function get(int $id): ?Order
+    public function get(int $id): Order
     {
         try {
-            return $this->model->with('cartDetails.book')->findOrFail($id);
+            return $this->model->with('orderDetails.book')->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             throw new Exception('Order not found.', 404);
         } catch (QueryException $e) {

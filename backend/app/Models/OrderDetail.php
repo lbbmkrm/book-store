@@ -10,11 +10,11 @@ class OrderDetail extends Model
     protected $fillable = [
         'order_id',
         'book_id',
+        'status',
         'price',
         'quantity'
     ];
 
-    public $timestamps = false;
 
     public function order(): BelongsTo
     {

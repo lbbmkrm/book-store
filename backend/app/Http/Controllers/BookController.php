@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Service\BookService;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\BookResource;
@@ -14,7 +13,6 @@ use App\Models\Book;
 
 class BookController extends Controller
 {
-    use AuthorizesRequests;
     private BookService $bookService;
     public function __construct(BookService $bookService)
     {
@@ -55,7 +53,7 @@ class BookController extends Controller
     {
         try {
             $validatedRequest = $request->validated();
-            $this->authorize('create', Book::class);
+            $this->isAuthorized('create', Book::class);
             $book = $this->bookService->createBook($validatedRequest);
             return $this->successResponse(
                 'Book created successfully',
@@ -71,7 +69,7 @@ class BookController extends Controller
     {
         try {
             $book = $this->bookService->getBook($id);
-            $this->authorize('update', $book);
+            $this->isAuthorized('update', $book);
             $validatedRequest = $request->validated();
             $updatedBook = $this->bookService->updateBook($id, $validatedRequest);
             return $this->successResponse('Book updated successfully', new BookResource($updatedBook));
@@ -84,7 +82,7 @@ class BookController extends Controller
     {
         try {
             $book = $this->bookService->getBook($id);
-            $this->authorize('delete', $book);
+            $this->isAuthorized('delete', $book);
             $this->bookService->deleteBook($id);
             return $this->successResponse('Book deleted successfully');
         } catch (Exception $e) {
