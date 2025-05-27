@@ -1,12 +1,7 @@
-<script setup>
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
-const heroImage = ref('/assets/img/hero.jpg')
-</script>
 <template>
   <section class="bg-white mx-auto min-h-screen md:w-[85%]">
     <div class="container p-8 md:py-12 px-4 flex flex-col md:flex-row">
-      <!-- left content -->
+      <!-- Konten kiri -->
       <div class="h-screen w-full md:w-1/2 flex flex-col justify-center space-y-8">
         <h1 class="font-serif font-bold mb-12 text-4xl md:text-5xl leading-tight text-gray-900">
           Buku Pilihan untuk Memperkaya Hidup Anda
@@ -30,15 +25,25 @@ const heroImage = ref('/assets/img/hero.jpg')
           </RouterLink>
         </div>
       </div>
-      <!-- right content -->
+      <!-- Konten kanan -->
       <div class="w-full md:w-1/2">
         <img
           :src="heroImage"
-          alt="hero image"
+          alt="Gambar Hero"
           class="h-screen w-full md:h-[90vh] rounded mx-auto shadow-lg"
         />
       </div>
     </div>
   </section>
 </template>
-<style scoped></style>
+
+<script setup>
+import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
+
+const heroImage = ref('/assets/img/hero.jpg')
+</script>
+
+<style scoped>
+/* Gaya tambahan jika diperlukan */
+</style>

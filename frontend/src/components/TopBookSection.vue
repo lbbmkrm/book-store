@@ -1,67 +1,119 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
-import cartPlusIcon from './icons/cart-plus-icon.vue'
-const topBooks = ref([])
-async function fetchTopProducts() {
+import { onMounted, ref } from 'vue'
+import axios from 'axios'
+import CartPlusIcon from './icons/cart-plus-icon.vue'
+
+const books = ref([])
+async function fetchData() {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/top-products')
-    const productsObejct = await res.json()
-    topBooks.value = productsObejct.data
-  } catch (err) {
-    console.log('error' + err)
+    const res = await axios.get('http://127.0.0.1:8000/api/top-books', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    books.value = res.data.data
+  } catch (error) {
+    console.error('Error', error.message)
   }
 }
-const mockBook = ref('/assets/img/mock-book.jpg')
-onMounted(fetchTopProducts)
+
+// Methods
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('id-ID').format(parseFloat(price))
+}
+
+const addToCart = (book) => {
+  const existingItem = cartItems.value.find((item) => item.id === book.id)
+
+  if (existingItem) {
+    existingItem.quantity += 1
+  } else {
+    cartItems.value.push({
+      ...book,
+      quantity: 1,
+    })
+  }
+}
+onMounted(() => {
+  fetchData()
+})
 </script>
 <template>
-  <section class="py-16 min-h-screen flex item-center mb-24 md:mb-0">
-    <div class="container max-w-6xl mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-serif font-bold text-gray-900">Buku Unggulan</h2>
-        <p class="text-gray-600 mt-2">Pilihan buku terbaik yang paling diminati pembaca</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+  <div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-8">Buku Unggulan</h1>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ho">
         <div
-          v-for="book in topBooks"
+          v-for="book in books"
           :key="book.id"
-          class="rounded-lg shadow-lg overflow-hidden hover:shadow-lg transition-shadow duration-300"
+          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
         >
-          <div class="h-64 overflow-hidden p-4">
-            <img :src="mockBook" :alt="book.title" class="rounded-lg w-full h-full object-cover" />
+          <!-- Book Image -->
+          <div
+            class="relative h-64 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"
+          >
+            <img
+              src="/assets/img/mock-book.jpg"
+              :alt="book.img"
+              class="w-full h-full object-cover"
+            />
+
+            <!-- Category Badge -->
+            <div class="absolute top-3 left-3">
+              <span class="bg-white/90 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
+                {{ book.category.name }}
+              </span>
+            </div>
+
+            <!-- Stock Status -->
+            <div class="absolute bottom-3 right-3">
+              <span
+                class="px-2 py-1 rounded-full text-xs font-medium"
+                :class="book.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+              >
+                {{ book.stock > 0 ? `Stok: ${book.stock}` : 'Habis' }}
+              </span>
+            </div>
           </div>
-          <div class="p-4">
-            <h3 class="font-bold font-serif text-gray-900 text-xl">{{ book.title }}</h3>
-            <p class="italic font-mono text-gray-500">{{ book.author }}</p>
-            <div class="grid grid-cols-2 item center justify-between">
-              <span class="font-serif text-light self-center text-indigo-700"
-                >Rp. {{ Number(book.price).toLocaleString('id-ID') }}</span
-              >
-              <div class="flex justify-end">
-                <button
-                  class="cursor-pointer px-5 py-2 font-monospace text-gray-800 bg-slate-50 hover:bg-sky-100"
-                >
-                  <cartPlusIcon />
-                </button>
+
+          <!-- Book Details -->
+          <div class="p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-2 min-h-14">
+              {{ book.title }}
+            </h3>
+
+            <p class="text-sm text-gray-600 mb-3">
+              oleh <span class="font-medium">{{ book.author }}</span>
+            </p>
+
+            <p class="text-sm text-gray-700 mb-4">
+              {{ book.description }}
+            </p>
+
+            <!-- Price -->
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <span class="text-2xl font-bold text-blue-600">
+                  Rp {{ formatPrice(book.price) }}
+                </span>
               </div>
+            </div>
+
+            <!-- Add to Cart -->
+            <div class="cursor-pointer flex items-center">
               <button
-                class="col-span-2 md:flex-1 cursor-pointer px-6 py-2 bg-indigo-600 text-white hover:bg-indigo-400 rounded-lg"
+                @click="addToCart(book)"
+                :disabled="book.stock === 0"
+                class="cursor-pointer w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-300 delay-75 ease-in-out"
               >
-                Beli
+                <CartPlusIcon class="text-white" />
+                Keranjang
               </button>
             </div>
           </div>
         </div>
       </div>
-      <div class="text-center mt-12">
-        <RouterLink
-          to="/shop"
-          class="cursor-pointer border border-indigo-600 text-indigo-600 px-6 py-3 rounded hover:bg-indigo-600 hover:text-white transition-all delay-100 duration-200"
-        >
-          Lihat Semua Buku
-        </RouterLink>
-      </div>
     </div>
-  </section>
+  </div>
 </template>

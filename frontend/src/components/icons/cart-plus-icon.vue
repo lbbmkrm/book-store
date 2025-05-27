@@ -4,7 +4,7 @@
     width="22"
     height="22"
     fill="currentColor"
-    class="bi bi-cart-plus text-gray-800 hover:text-indigo-700 transition-all duration-300 delay-75 ease-in-out"
+    class="bi bi-cart-plus"
     viewBox="0 0 16 16"
   >
     <path
