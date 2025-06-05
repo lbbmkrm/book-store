@@ -75,4 +75,15 @@ class BookRepository
             throw new Exception('Failed to delete book.', 500);
         }
     }
+
+    public function getTopBooks()
+    {
+        try {
+            return $this->model->inRandomOrder()->limit(4)->get();
+        } catch (QueryException $e) {
+            throw new Exception('Failed to retrieve books due to a database error.', 422);
+        } catch (Exception $e) {
+            throw new Exception('Failed to retrieve books.', 500);
+        }
+    }
 }

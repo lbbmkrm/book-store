@@ -23,14 +23,12 @@ class BookController extends Controller
         try {
             $books = $this->bookService->getAllBooks();
             $message = $books->isEmpty() ? 'no books' : 'success';
-            return response()->json([
-                'message' => $message,
-                'books' => BookResource::collection($books)
-            ]);
+            return $this->successResponse(
+                $message,
+                BookResource::collection($books)
+            );
         } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], $e->getCode());
+            return $this->failedResponse($e);
         }
     }
 
@@ -85,6 +83,20 @@ class BookController extends Controller
             $this->isAuthorized('delete', $book);
             $this->bookService->deleteBook($id);
             return $this->successResponse('Book deleted successfully');
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
+        }
+    }
+
+    public function topBooks(): JsonResponse
+    {
+        try {
+            $books = $this->bookService->getTopBooks();
+            $message = $books->isEmpty() ? 'No top books found' : 'success';
+            return $this->successResponse(
+                $message,
+                BookResource::collection($books)
+            );
         } catch (Exception $e) {
             return $this->failedResponse($e);
         }

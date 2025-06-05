@@ -109,4 +109,17 @@ class BookService
             );
         }
     }
+
+    public function getTopBooks()
+    {
+        try {
+            $books = $this->bookRepo->getTopBooks();
+            return $books;
+        } catch (Exception $e) {
+            throw new Exception(
+                $e->getMessage() ?: 'failed to get top books',
+                $e->getCode() ?: 500
+            );
+        }
+    }
 }

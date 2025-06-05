@@ -23,14 +23,12 @@ class CategoryController extends Controller
         try {
             $categories = $this->categoryService->getAll();
             $message = $categories->isEmpty() ? 'no categories' : 'success';
-            return response()->json([
-                'message' => $message,
-                'categories' => CategoryResource::collection($categories)
-            ]);
+            return $this->successResponse(
+                $message,
+                CategoryResource::collection($categories)
+            );
         } catch (Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], $e->getCode());
+            return $this->failedResponse($e);
         }
     }
 

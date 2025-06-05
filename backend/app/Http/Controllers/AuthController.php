@@ -70,4 +70,14 @@ class AuthController extends Controller
             return $this->failedResponse($e);
         }
     }
+
+    public function authenticated(): JsonResponse
+    {
+        try {
+            $user = $this->getCurrentUser();
+            return $this->successResponse('Authenticated', new UserResource($user));
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
+        }
+    }
 }
