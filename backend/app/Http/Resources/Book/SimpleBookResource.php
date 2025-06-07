@@ -17,9 +17,11 @@ class SimpleBookResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'author' => $this->author,
             'category' => $this->category->name,
             'stock' => $this->stock,
-            'price' => $this->price
+            'price' => $this->price,
+            'img' => $this->img
         ];
     }
 }

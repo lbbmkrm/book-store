@@ -22,6 +22,7 @@ const router = createRouter({
       path: '/cart',
       name: 'cart',
       component: CartView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/login',
@@ -47,6 +48,55 @@ const router = createRouter({
     }
     return { top: 0 }
   },
+})
+
+// Navigation Guard
+router.beforeEach(async (to, from, next) => {
+  // Periksa jika rute memerlukan autentikasi
+  if (to.meta.requiresAuth) {
+    const token = localStorage.getItem('authToken')
+
+    // Jika tidak ada token, arahkan ke login dengan menyimpan rute tujuan
+    if (!token) {
+      return next({
+        path: '/login',
+        query: { redirect: to.fullPath }, // Simpan rute tujuan untuk redirect setelah login
+      })
+    }
+
+    // Validasi token dengan API
+    try {
+      const response = await fetch('http://localhost:8000/api/authenticated', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (response.ok) {
+        // Token valid, izinkan akses
+        next()
+      } else {
+        // Token tidak valid, hapus token dan arahkan ke login
+        localStorage.removeItem('authToken')
+        return next({
+          path: '/login',
+          query: { redirect: to.fullPath },
+        })
+      }
+    } catch (error) {
+      console.error('Error validasi token:', error)
+      // Jika terjadi kesalahan (misalnya, jaringan), hapus token dan arahkan ke login
+      localStorage.removeItem('authToken')
+      return next({
+        path: '/login',
+        query: { redirect: to.fullPath },
+      })
+    }
+  } else {
+    // Rute tidak memerlukan autentikasi, izinkan akses
+    next()
+  }
 })
 
 export default router

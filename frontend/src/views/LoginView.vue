@@ -1,164 +1,115 @@
 <script setup>
 import { ref } from 'vue'
-
+import axios from 'axios'
 const email = ref('')
 const password = ref('')
-const rememberMe = ref(false)
-const isLoading = ref(false)
-const emailError = ref('')
-const passwordError = ref('')
-
-const validateForm = () => {
-  let isValid = true
-
-  // Validasi email
-  if (!email.value) {
-    emailError.value = 'Email tidak boleh kosong'
-    isValid = false
-  } else if (!/^\S+@\S+\.\S+$/.test(email.value)) {
-    emailError.value = 'Format email tidak valid'
-    isValid = false
-  } else {
-    emailError.value = ''
-  }
-
-  // Validasi password
-  if (!password.value) {
-    passwordError.value = 'Password tidak boleh kosong'
-    isValid = false
-  } else if (password.value.length < 6) {
-    passwordError.value = 'Password minimal 6 karakter'
-    isValid = false
-  } else {
-    passwordError.value = ''
-  }
-
-  return isValid
-}
-
-const handleLogin = async () => {
-  if (!validateForm()) {
-    return
-  }
-
+const errorMessage = ref('')
+const login = async () => {
   try {
-    isLoading.value = true
-
-    // Simulasi API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    // Di sini Anda bisa memanggil API atau fungsi autentikasi sebenarnya
-    console.log('Login dengan:', {
+    const response = await axios.post('http://127.0.0.1:8000/api/login', {
       email: email.value,
       password: password.value,
-      rememberMe: rememberMe.value,
     })
+    if (response.data.token) {
+      localStorage.setItem('authToken', response.data.token)
+      localStorage.setItem('user', response.data)
 
-    // Reset form setelah berhasil
-    email.value = ''
-    password.value = ''
-    rememberMe.value = false
-
-    alert('Login berhasil!')
+      window.location.href = '/'
+    }
   } catch (error) {
-    console.error('Login gagal:', error)
-    alert('Login gagal. Silakan coba lagi.')
-  } finally {
-    isLoading.value = false
+    if (error.response) {
+      if (error.response.status === 422) {
+        errorMessage.value = error.response.data.message || 'Please check your input fields'
+      } else if (error.response.status === 401) {
+        errorMessage.value = 'Invalid email or password'
+      } else {
+        errorMessage.value = error.response.data.message || 'Login failed'
+      }
+    }
   }
 }
 </script>
 <template>
-  <div class="min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-800">Login</h1>
-        <p class="text-gray-600 mt-2">Silakan masuk ke akun Anda</p>
+  <div
+    class="flex items-center justify-center min-h-screen px-4 py-8 bg-gradient-to-r from-gray-50 to-gray-100 dark:bg-gray-900 dark:from-gray-800 dark:to-gray-700"
+  >
+    <div
+      id="login-form"
+      class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 hover:shadow-xl transition-all ease-in-out duration-200 delay-75 dark:bg-gray-800 dark:text-white"
+    >
+      <div class="mb-6 text-center dark:text-gray-200">
+        <h1 class="text-[32px] text-gray-800 dark:text-gray-200">Sign in to your account</h1>
       </div>
-
-      <form @submit.prevent="handleLogin">
-        <div class="mb-6">
-          <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Masukkan email Anda"
-            required
-          />
-          <p v-if="emailError" class="mt-1 text-sm text-red-600">{{ emailError }}</p>
-        </div>
-
-        <div class="mb-6">
-          <div class="flex justify-between items-center mb-2">
-            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-            <a href="#" class="text-sm text-blue-600 hover:underline">Lupa password?</a>
-          </div>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Masukkan password Anda"
-            required
-          />
-          <p v-if="passwordError" class="mt-1 text-sm text-red-600">{{ passwordError }}</p>
-        </div>
-
-        <div class="flex items-center mb-6">
-          <input
-            type="checkbox"
-            id="remember"
-            v-model="rememberMe"
-            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-          />
-          <label for="remember" class="ml-2 block text-sm text-gray-700">Ingat saya</label>
-        </div>
-
-        <button
-          type="submit"
-          class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          :disabled="isLoading"
-        >
-          <span v-if="isLoading">Loading...</span>
-          <span v-else>Login</span>
-        </button>
-      </form>
-
-      <div class="mt-6 text-center">
-        <p class="text-sm text-gray-600">
-          Belum memiliki akun?
-          <router-link to="/register" class="text-blue-600 hover:underline font-medium">
-            Daftar di sini
-          </router-link>
+      <div class="mb-6">
+        <p v-if="errorMessage" class="text-red-500 text-sm mb-4 dark:text-red-400 text-center">
+          {{ errorMessage }}
         </p>
+        <form
+          v-on:submit.prevent="login"
+          class="space-y-6 hover:shadow-lg transition-shadow duration-300 dark:hover:shadow-xl"
+        >
+          <div class="space-y-4 dark:text-gray-200">
+            <div class="flex flex-col gap-2 mb-4 dark:text-gray-200">
+              <label for="email">Email</label>
+              <input
+                v-model="email"
+                class="border rounded-lg p-2 focus:outline-none focus:ring-2 dark:bg-gray-700 dark:text-gray-200"
+                :class="
+                  errorMessage
+                    ? 'border-red-500 dark:border-red-400 focus:ring-red-500'
+                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                "
+                required
+                placeholder="Enter your email"
+                id="email"
+                autocomplete="off"
+              />
+            </div>
+            <div class="flex flex-col gap-2 mb-4">
+              <label for="password">Password</label>
+              <input
+                v-model="password"
+                type="password"
+                class="border rounded-lg p-2 focus:outline-none focus:ring-2 dark:bg-gray-700 dark:text-gray-200"
+                :class="
+                  errorMessage
+                    ? 'border-red-500 dark:border-red-400 focus:ring-red-500'
+                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                "
+                placeholder="Enter your password"
+                id="password"
+              />
+            </div>
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2 dark:text-gray-200">
+                <input type="checkbox" />
+                <p>Remember me</p>
+              </div>
+              <p
+                class="cursor-pointer text-indigo-600 hover:text-indigo-800 transition-colors duration-200 dark:text-indigo-400 dark:hover:text-indigo-600"
+              >
+                Forgot password?
+              </p>
+            </div>
+            <button
+              class="cursor-pointer w-full bg-indigo-600 text-white font-semibold rounded-lg px-4 py-2 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+              type="submit"
+              v-on:click="login"
+            >
+              Sign in
+            </button>
+          </div>
+        </form>
       </div>
-
-      <div class="mt-6">
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-gray-300"></div>
-          </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="px-2 bg-white text-gray-500">Atau login dengan</span>
-          </div>
-        </div>
-
-        <div class="mt-6 grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            class="py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      <div>
+        <p class="mt-4 text-center text-gray-600 dark:text-gray-400">
+          Don't have an account?
+          <a
+            href="#"
+            class="text-indigo-600 hover:text-indigo-800 transition-colors duration-200 dark:text-indigo-400 dark:hover:text-indigo-600"
+            >Sign up</a
           >
-            Google
-          </button>
-          <button
-            type="button"
-            class="py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Facebook
-          </button>
-        </div>
+        </p>
       </div>
     </div>
   </div>

@@ -20,23 +20,23 @@ const closeMenu = () => {
 }
 
 const navigationButtonClass =
-  'flex items-center cursor-pointer rounded-md px-3 py-2 text-gray-700 transform transition-transform hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 ease-in-out  hover:scale-105 gap-2 '
+  'flex items-center cursor-pointer rounded-md px-3 py-2 text-gray-700 transform transition-transform hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 ease-in-out  hover:scale-105 gap-2 dark:text-white dark:hover:text-blue-400 dark:hover:bg-gray-700'
 </script>
 <template>
-  <nav class="fixed w-full top-0 left-0 right-0 bg-white">
-    <div class="w-full p-4 flex justify-between items-center">
+  <nav class="fixed w-full top-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-md z-50">
+    <div class="w-full p-4 flex justify-between items-center dark:text-white">
       <!-- Logo -->
-      <div class="logo flex item-center">
+      <div class="logo flex item-center dark:text-white">
         <h1 class="font-serif text-xl md:text-3xl font-light">mystore</h1>
       </div>
       <!-- Center Nav -->
-      <div class="center-navigation hidden md:flex gap-8 text-xl items-center">
+      <div class="center-navigation hidden md:flex gap-8 text-xl items-center dark:text-white">
         <RouterLink to="/" :class="navigationButtonClass"><HomeIcon />Home</RouterLink>
         <RouterLink to="/shop" :class="navigationButtonClass"><ShopIcon />Shop</RouterLink>
         <RouterLink :class="navigationButtonClass"><AboutIcon />About</RouterLink>
       </div>
       <!-- Right Nav -->
-      <div class="right-navigation hidden md:flex item-center justify-end gap-4">
+      <div class="right-navigation hidden md:flex item-center justify-end gap-4 dark:text-white">
         <RouterLink to="/cart" :class="navigationButtonClass">
           <CartIcon />
         </RouterLink>
@@ -49,10 +49,10 @@ const navigationButtonClass =
       </div>
 
       <!-- Mobile Nav -->
-      <div class="mobile-nav md:hidden flex item-center">
+      <div class="mobile-nav md:hidden flex item-center dark:text-white">
         <button
           @click="toggleMenu"
-          class="cursor-pointer text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 ease transform hover:sclae-110 relative"
+          class="cursor-pointer text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 ease transform hover:sclae-110 relative rounded-md p-2 dark:text-white dark:hover:text-blue-400 dark:hover:bg-gray-700"
         >
           <HamburgerIcon v-if="!isMenuOpen" />
           <CrossIcon v-if="isMenuOpen" />
@@ -62,20 +62,20 @@ const navigationButtonClass =
       <!-- Mobile menu overlay -->
       <div
         v-if="isMenuOpen"
-        class="fixed inset-0 bg-transparent backdrop-blur-sm z-10 md:hidden transition-opacity duration-400"
+        class="fixed inset-0 bg-transparent backdrop-blur-sm z-10 md:hidden transition-opacity duration-400 dark:bg-gray-800 dark:bg-opacity-50 dark:backdrop-blur-sm"
         @click="closeMenu"
       ></div>
       <!-- Mobile Menu -->
       <div
-        class="z-20 fixed min-w-[60%] tranform transition-all perspective-origin-right py-2 right-0 top-0 h-full bg-white shadow-md duration-400 ease-in-out md:hidden"
+        class="z-20 fixed min-w-[60%] transform transition-all perspective-origin-right py-2 right-0 top-0 h-full bg-white shadow-md duration-400 ease-in-out md:hidden dark:bg-gray-800 dark:text-white"
         :class="isMenuOpen ? 'translate-x-0' : 'translate-full'"
       >
-        <div class="flex flex-col w-full p-4 gap-4">
-          <div class="flex justify-end mb-4 rounded-full">
+        <div class="flex flex-col w-full p-4 gap-4 dark:bg-gray-800 dark:text-white">
+          <div class="flex justify-end mb-4 rounded-full dark:bg-gray-800 dark:text-white">
             <button
               @click="closeMenu"
               :class="navigationButtonClass"
-              class="hover:transform hover:rotate-180 transition-all ease-in-out duration-400"
+              class="hover:transform hover:rotate-180 transition-all ease-in-out duration-400 dark:hover:bg-gray-800 dark:hover:text-white dark:text-white dark:hover:scale-110"
             >
               <CrossIcon />
             </button>
