@@ -79,7 +79,7 @@ class BookRepository
     public function getTopBooks()
     {
         try {
-            return $this->model->inRandomOrder()->limit(4)->get();
+            return $this->model->inRandomOrder()->limit(5)->get();
         } catch (QueryException $e) {
             throw new Exception('Failed to retrieve books due to a database error.', 422);
         } catch (Exception $e) {

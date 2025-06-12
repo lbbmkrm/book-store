@@ -4,6 +4,8 @@ import ShopView from '@/views/ShopView.vue'
 import CartView from '@/views/CartView.vue'
 import ExampleView from '@/views/ExampleView.vue'
 import LoginView from '@/views/LoginView.vue'
+import CheckoutView from '@/views/CheckoutView.vue'
+import SuccessOrderView from '@/views/SuccessOrderView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +25,26 @@ const router = createRouter({
       name: 'cart',
       component: CartView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/checkout',
+      name: 'checkout',
+      component: CheckoutView,
+      meta: { requiresAuth: true },
+      beforeEnter: (to, from, next) => {
+        const cartItems = localStorage.getItem('cartItems')
+        if (cartItems) {
+          next()
+        } else {
+          next('/cart')
+        }
+      },
+    },
+    {
+      path: '/successOrder',
+      name: 'SuccessOrder',
+      component: SuccessOrderView,
+      meta: { requiresAuth: true, hideFooter: true, hideNavbar: true },
     },
     {
       path: '/login',
@@ -56,7 +78,6 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
     const token = localStorage.getItem('authToken')
 
-    // Jika tidak ada token, arahkan ke login dengan menyimpan rute tujuan
     if (!token) {
       return next({
         path: '/login',
@@ -64,7 +85,6 @@ router.beforeEach(async (to, from, next) => {
       })
     }
 
-    // Validasi token dengan API
     try {
       const response = await fetch('http://localhost:8000/api/authenticated', {
         headers: {
@@ -74,10 +94,8 @@ router.beforeEach(async (to, from, next) => {
       })
 
       if (response.ok) {
-        // Token valid, izinkan akses
         next()
       } else {
-        // Token tidak valid, hapus token dan arahkan ke login
         localStorage.removeItem('authToken')
         return next({
           path: '/login',

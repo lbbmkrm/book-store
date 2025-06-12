@@ -22,15 +22,18 @@ const closeMenu = () => {
 const navigationButtonClass =
   'flex items-center cursor-pointer rounded-md px-3 py-2 text-gray-700 transform transition-transform hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 ease-in-out  hover:scale-105 gap-2 dark:text-white dark:hover:text-blue-400 dark:hover:bg-gray-700'
 </script>
+
 <template>
   <nav class="fixed w-full top-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-md z-50">
     <div class="w-full p-4 flex justify-between items-center dark:text-white">
       <!-- Logo -->
       <div class="logo flex item-center dark:text-white">
-        <h1 class="font-serif text-xl md:text-3xl font-light">mystore</h1>
+        <h1 class="font-header text-xl md:text-3xl font-light">mystore</h1>
       </div>
       <!-- Center Nav -->
-      <div class="center-navigation hidden md:flex gap-8 text-xl items-center dark:text-white">
+      <div
+        class="font-label center-navigation hidden md:flex gap-8 text-xl items-center dark:text-white"
+      >
         <RouterLink to="/" :class="navigationButtonClass"><HomeIcon />Home</RouterLink>
         <RouterLink to="/shop" :class="navigationButtonClass"><ShopIcon />Shop</RouterLink>
         <RouterLink :class="navigationButtonClass"><AboutIcon />About</RouterLink>

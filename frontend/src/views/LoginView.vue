@@ -12,7 +12,7 @@ const login = async () => {
     })
     if (response.data.token) {
       localStorage.setItem('authToken', response.data.token)
-      localStorage.setItem('user', response.data)
+      localStorage.setItem('user', JSON.stringify(response.data.data))
 
       window.location.href = '/'
     }

@@ -1,1 +1,6 @@
 @import 'tailwindcss';
+@theme {
+  --font-header: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-label: 'Source Sans 3', sans-serif;
+}

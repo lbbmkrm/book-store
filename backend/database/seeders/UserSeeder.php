@@ -22,6 +22,17 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'name' => 'Demo',
+                'email' => 'demo@example.com',
+                'password' => bcrypt('password123'),
+                'img' => null,
+                'address' => 'Jl. Demo No.1, Medan',
+                'phone' => '081234567890',
+                'is_admin' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
                 'name' => 'Budi Santoso',
                 'email' => 'budi.santoso@example.com',
                 'password' => bcrypt('password123'),

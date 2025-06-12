@@ -1,63 +1,151 @@
+<script setup>
+import { onMounted, ref } from 'vue'
+import axios from 'axios'
+const rickRoll = ref('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+const categories = ref(null)
+
+const fetchCategories = async function () {
+  try {
+    const result = await axios.get('127.0.0.1:8000/api/categories')
+    categories.value = result.data.data
+  } catch (error) {
+    console.log(error.response.data.message)
+    categories.value = []
+  }
+
+  onMounted(() => {
+    fetchCategories()
+  })
+}
+</script>
 <template>
-  <footer class="bg-gray-900 text-white py-12">
-    <div class="container mx-auto px-4 max-w-6xl">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div>
-          <h3 class="text-lg font-bold mb-4">Nama Toko Buku</h3>
-          <p class="text-gray-400 text-sm">
-            Toko buku online terlengkap dengan koleksi berkualitas untuk semua kalangan pembaca.
+  <footer
+    class="min-h-screen bg-white text-gray-800 dark:bg-gray-800 dark:text-white py-16 relative flex items-end"
+  >
+    <div class="container mx-auto px-4 max-w-6xl relative z-10">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <!-- Company Info -->
+        <div class="space-y-4">
+          <h3 class="text-xl font-bold mb-4">BookStore</h3>
+          <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+            Toko buku online terpercaya dengan koleksi terlengkap. Kami menyediakan berbagai jenis
+            buku berkualitas untuk semua kalangan pembaca.
           </p>
-          <div class="flex space-x-4 mt-4">
-            <a href="#" class="text-gray-400 hover:text-white transition-colors">📱</a>
-            <a href="#" class="text-gray-400 hover:text-white transition-colors">👤</a>
-            <a href="#" class="text-gray-400 hover:text-white transition-colors">📸</a>
-            <a href="#" class="text-gray-400 hover:text-white transition-colors">🐦</a>
+          <div class="flex space-x-3 pt-2">
+            <a
+              href="#"
+              class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white hover:bg-gray-500 transition"
+              >📱</a
+            >
+            <a
+              href="#"
+              class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white hover:bg-gray-500 transition"
+              >👤</a
+            >
+            <a
+              href="#"
+              class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white hover:bg-gray-500 transition"
+              >📸</a
+            >
+            <a
+              href="#"
+              class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white hover:bg-gray-500 transition"
+              >🐦</a
+            >
           </div>
         </div>
 
-        <div>
-          <h3 class="text-lg font-bold mb-4">Kategori</h3>
-          <ul class="space-y-2 text-gray-400">
-            <li><a href="#" class="hover:text-white transition-colors">Fiksi</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Non-fiksi</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Pendidikan</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Anak-anak</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Bisnis</a></li>
+        <!-- Categories -->
+        <div class="space-y-4">
+          <h3 class="text-xl font-bold mb-4">Kategori</h3>
+          <ul class="space-y-3">
+            <li v-for="label in categories" :key="label">
+              <a
+                href="#"
+                class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition flex items-center group"
+              >
+                <span
+                  class="text-xs text-gray-400 dark:text-gray-500 mr-2 group-hover:text-gray-500 dark:group-hover:text-gray-300"
+                  >▶</span
+                >
+                {{ label }}
+              </a>
+            </li>
           </ul>
         </div>
 
-        <div>
-          <h3 class="text-lg font-bold mb-4">Bantuan</h3>
-          <ul class="space-y-2 text-gray-400">
-            <li><a href="#" class="hover:text-white transition-colors">Cara Pemesanan</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Pembayaran</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Pengiriman</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">Pengembalian</a></li>
-            <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 class="text-lg font-bold mb-4">Newsletter</h3>
-          <p class="text-gray-400 text-sm mb-4">Dapatkan informasi promo dan buku terbaru</p>
-          <form class="space-y-2">
-            <input
-              type="email"
-              placeholder="Masukkan email Anda"
-              class="w-full px-3 py-2 bg-gray-800 text-white border border-gray-700 rounded focus:outline-none focus:border-blue-500"
-            />
-            <button
-              type="submit"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition-colors"
+        <!-- Help -->
+        <div class="space-y-4">
+          <h3 class="text-xl font-bold mb-4">Bantuan</h3>
+          <ul class="space-y-3">
+            <li
+              v-for="label in [
+                'Cara Pemesanan',
+                'Metode Pembayaran',
+                'Info Pengiriman',
+                'Kebijakan Retur',
+                'FAQ',
+              ]"
+              :key="label"
             >
-              Berlangganan
-            </button>
-          </form>
+              <a
+                href="#"
+                class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition flex items-center group"
+              >
+                <span
+                  class="text-xs text-gray-400 dark:text-gray-500 mr-2 group-hover:text-gray-500 dark:group-hover:text-gray-300"
+                  >▶</span
+                >
+                {{ label }}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Contact & Newsletter -->
+        <div class="space-y-6">
+          <div class="space-y-3 text-sm">
+            <h3 class="text-xl font-bold">Hubungi Kami</h3>
+            <div class="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
+              <span class="text-sm">📍</span> <span>Jl. Buku Raya No. 123, Jakarta</span>
+            </div>
+            <div class="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
+              <span class="text-sm">📞</span> <span>(021) 1234-5678</span>
+            </div>
+            <div class="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
+              <span class="text-sm">✉</span> <span>info@bookstore.com</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="border-t border-gray-800 mt-12 pt-6 text-center text-gray-500 text-sm">
-        <p>&copy; 2025 Nama Toko Buku. Hak Cipta Dilindungi.</p>
+      <!-- Bottom -->
+      <div
+        class="border-t border-gray-300 dark:border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
+      >
+        <p class="text-gray-500 text-sm">&copy; 2025 BookStore. Semua hak cipta dilindungi.</p>
+        <div class="flex flex-wrap justify-center gap-6 text-sm">
+          <a
+            :href="rickRoll"
+            class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
+            >Kebijakan Privasi</a
+          >
+          <a
+            :href="rickRoll"
+            class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
+            >Syarat & Ketentuan</a
+          >
+          <a
+            :href="rickRoll"
+            class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
+            >Bantuan</a
+          >
+          <a
+            :href="rickRoll"
+            class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
+            >Sitemap</a
+          >
+        </div>
       </div>
     </div>
   </footer>

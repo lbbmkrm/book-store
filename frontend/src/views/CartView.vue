@@ -14,6 +14,7 @@ const fetchCart = async () => {
       },
     })
     cartItems.value = response.data.data.cartDetails
+    localStorage.setItem('cartItems', JSON.stringify(response.data.data))
     console.log('Cart items fetched successfully')
   } catch (error) {
     console.error('Error fetching cart items:', error)
@@ -79,6 +80,7 @@ const subtotal = computed(() => {
   cartItems.value.forEach((item) => {
     total += item.book.price * item.quantity
   })
+  localStorage.setItem('subtotal', total)
   return total
 })
 
@@ -91,11 +93,20 @@ const shipping = computed(() => {
   } else {
     cost = 0
   }
+  localStorage.setItem('shippingCost', cost)
   return cost
 })
 const total = computed(() => {
+  localStorage.setItem('total', subtotal.value + shipping.value)
   return subtotal.value + shipping.value
 })
+
+const setCheckoutData = () => {
+  localStorage.setItem('cartItems', JSON.stringify(cartItems.value))
+  localStorage.setItem('subtotal', subtotal.value)
+  localStorage.setItem('shippingCost', shipping.value)
+  localStorage.setItem('total', total.value)
+}
 
 onMounted(() => {
   fetchCart()
@@ -112,14 +123,14 @@ onMounted(() => {
       <div
         class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200 dark:border-gray-700"
       >
-        <h1 class="text-2xl font-bold">Keranjang Belanja</h1>
-        <span class="text-gray-600 text-sm lg:text-base dark:text-gray-400">
+        <h1 class="text-2xl font-bold font-header">Keranjang Belanja</h1>
+        <span class="text-gray-600 text-sm lg:text-base dark:text-gray-400 font-label">
           {{ cartItems.length }} item
         </span>
       </div>
 
       <!-- Main Layout -->
-      <div class="flex flex-col lg:flex-row gap-8 dark:bg-gray-800">
+      <div class="flex flex-col lg:flex-row gap-8 font-label dark:bg-gray-800">
         <!-- Cart Items -->
         <div class="order-1 lg:flex-2 dark:bg-transparent lg:col-span-8">
           <div
@@ -134,7 +145,11 @@ onMounted(() => {
               >
                 <div class="w-16 h-20 lg:w-24 lg:h-32 flex-shrink-0">
                   <img
-                    :src="item.book.img ? `/storage/${item.book.img}` : ''"
+                    :src="
+                      item.book.img
+                        ? `/storage/${item.book.img}`
+                        : 'http://127.0.0.1:8000/storage/images/mock-book.jpg'
+                    "
                     :alt="item.book.title"
                     class="w-full h-full object-cover rounded border border-gray-200 dark:border-gray-600"
                   />
@@ -143,7 +158,7 @@ onMounted(() => {
                 <div class="flex-1 min-w-0 dark:text-gray-200">
                   <div class="mb-2 lg:mb-3 dark:text-gray-300">
                     <h3
-                      class="text-sm lg:text-lg font-medium text-gray-900 mb-1 dark:text-gray-200"
+                      class="text-sm lg:text-lg font-medium font-body text-gray-900 mb-1 dark:text-gray-200"
                     >
                       {{ item.book.title }}
                     </h3>
@@ -202,7 +217,7 @@ onMounted(() => {
           <!-- Continue Shopping -->
           <div class="mt-6 pt-4 border-t border-gray-200 lg:border-0 dark:border-gray-700">
             <button
-              class="cursor-pointer px-2 lg:px-3 py-1 lg:py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+              class="cursor-pointer px-2 lg:px-3 py-1 lg:py-2 text-sm text-gray-600 font-label hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
             >
               ← Lanjutkan Belanja
             </button>
@@ -233,18 +248,22 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="px-5 lg:px-6 py-4 border-t border-gray-100 dark:border-gray-700">
-              <button
-                class="cursor-pointer w-full py-2 bg-gray-800 text-white text-sm lg:text-base font-semibold rounded hover:bg-gray-700 transition-colors dark:bg-gray-600 dark:hover:bg-gray-500"
+            <div
+              class="w-full px-5 lg:px-6 py-4 border-t flex justify-center border-gray-100 dark:border-gray-700"
+            >
+              <RouterLink
+                v-on:click="setCheckoutData"
+                to="/checkout"
+                class="cursor-pointer w-full px-3 text-center py-2 bg-gray-800 text-white text-sm lg:text-base font-semibold rounded hover:bg-gray-700 transition-colors dark:bg-gray-600 dark:hover:bg-gray-500"
               >
                 Lanjutkan ke Pembayaran
-              </button>
+              </RouterLink>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div v-else="cartItems.length === 0" class="container mx-auto px-4 py-12 text-center">
+    <div v-else="cartItems.length === 0" class="container mt-18 mx-auto px-4 py-12 text-center">
       <h2 class="text-2xl font-bold mb-4">Keranjang Anda Kosong</h2>
       <p class="text-gray-600 mb-6">Tambahkan beberapa buku untuk memulai belanja!</p>
       <RouterLink
