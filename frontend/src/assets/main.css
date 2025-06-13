@@ -4,3 +4,4 @@
   --font-body: 'Inter', sans-serif;
   --font-label: 'Source Sans 3', sans-serif;
 }
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

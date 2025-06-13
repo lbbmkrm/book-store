@@ -2,7 +2,9 @@
 import { defineProps } from 'vue'
 import axios from 'axios'
 import CartPlusIcon from '@/components/icons/cart-plus-icon.vue'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const mockBook = '/assets/img/mock-book.jpg'
 const props = defineProps({
   book: {
@@ -29,10 +31,37 @@ const addToCart = async (bookId) => {
         },
       },
     )
-    alert('Success: ' + response.data.message)
+    toast.success(response.data.message, {
+      position: 'top-center',
+      timeout: 2000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: false,
+      draggable: true,
+      draggablePercent: 0.5,
+      showCloseButtonOnHover: false,
+      hideProgressBar: true,
+      closeButton: false,
+      icon: CartPlusIcon,
+      rtl: false,
+    })
+    console.log('Berhasil menambahkan buku ke cart')
   } catch (error) {
     console.error(error)
-    alert(error?.response?.data?.message || 'Terjadi kesalahan.')
+    toast.error('Terjadi Kesalahan, Coba Lagi...', {
+      position: 'top-center',
+      timeout: 2000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: false,
+      draggable: true,
+      draggablePercent: 0.5,
+      showCloseButtonOnHover: false,
+      hideProgressBar: true,
+      closeButton: false,
+      icon: CartPlusIcon,
+      rtl: false,
+    })
   }
 }
 </script>

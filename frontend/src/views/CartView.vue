@@ -86,9 +86,9 @@ const subtotal = computed(() => {
 
 const shipping = computed(() => {
   let cost = 0
-  if (subtotal.value <= 100_000) {
+  if (subtotal.value <= 100000) {
     cost = 40000
-  } else if (subtotal.value <= 250_000) {
+  } else if (subtotal.value <= 250000) {
     cost = 20000
   } else {
     cost = 0

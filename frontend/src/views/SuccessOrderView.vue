@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -28,34 +28,6 @@ const formatDate = (dateString) => {
   })
 }
 
-// Get status badge class
-const getStatusBadgeClass = (status) => {
-  switch (status) {
-    case 'processing':
-      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-    case 'completed':
-      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-    case 'failed':
-      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-    default:
-      return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-  }
-}
-
-// Get status text
-const getStatusText = (status) => {
-  switch (status) {
-    case 'processing':
-      return 'Sedang Diproses'
-    case 'completed':
-      return 'Selesai'
-    case 'failed':
-      return 'Gagal'
-    default:
-      return status
-  }
-}
-
 // Navigate to orders list
 const goToOrders = () => {
   router.push('/orders')
@@ -65,6 +37,10 @@ const goToOrders = () => {
 const continueShopping = () => {
   router.push('/shop')
 }
+
+onMounted(() => {
+  console.log(order)
+})
 </script>
 
 <template>
@@ -149,10 +125,9 @@ const continueShopping = () => {
             <div class="flex items-center justify-between">
               <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Detail Pesanan</h2>
               <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-                :class="getStatusBadgeClass(order.status)"
+                class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200"
               >
-                {{ getStatusText(order.status) }}
+                <p>{{ order.status }}</p>
               </span>
             </div>
           </div>

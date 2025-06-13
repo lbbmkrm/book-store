@@ -1,22 +1,21 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
-const rickRoll = ref('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-const categories = ref(null)
+const categories = ref([])
 
 const fetchCategories = async function () {
   try {
-    const result = await axios.get('127.0.0.1:8000/api/categories')
+    const result = await axios.get('http://127.0.0.1:8000/api/categories') // perbaiki juga URL
     categories.value = result.data.data
   } catch (error) {
-    console.log(error.response.data.message)
+    console.log(error?.response?.data?.message || error.message)
     categories.value = []
   }
-
-  onMounted(() => {
-    fetchCategories()
-  })
 }
+
+onMounted(() => {
+  fetchCategories()
+})
 </script>
 <template>
   <footer
@@ -68,7 +67,7 @@ const fetchCategories = async function () {
                   class="text-xs text-gray-400 dark:text-gray-500 mr-2 group-hover:text-gray-500 dark:group-hover:text-gray-300"
                   >▶</span
                 >
-                {{ label }}
+                {{ label.name }}
               </a>
             </li>
           </ul>
@@ -125,24 +124,16 @@ const fetchCategories = async function () {
       >
         <p class="text-gray-500 text-sm">&copy; 2025 BookStore. Semua hak cipta dilindungi.</p>
         <div class="flex flex-wrap justify-center gap-6 text-sm">
-          <a
-            :href="rickRoll"
-            class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
+          <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
             >Kebijakan Privasi</a
           >
-          <a
-            :href="rickRoll"
-            class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
+          <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
             >Syarat & Ketentuan</a
           >
-          <a
-            :href="rickRoll"
-            class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
+          <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
             >Bantuan</a
           >
-          <a
-            :href="rickRoll"
-            class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
+          <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition"
             >Sitemap</a
           >
         </div>

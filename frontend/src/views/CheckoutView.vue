@@ -8,7 +8,7 @@ const cartItems = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
   : []
 const subTotal = localStorage.getItem('subtotal') || 0
-const shipping = localStorage.getItem('shipping') || 0
+const shipping = localStorage.getItem('shippingCost') || 0
 const total = localStorage.getItem('total') || 0
 const address = ref('')
 const createOrder = async () => {
@@ -37,7 +37,7 @@ const createOrder = async () => {
       })
     }
   } catch (error) {
-    console.log(error)
+    console.log(error.response.data.message)
     alert('Gagal membuat pesanan. Silakan coba lagi.')
   }
 }
@@ -50,7 +50,7 @@ const formatPrice = (price) => {
 </script>
 
 <template>
-  <div class="min-h-screen mt-18 bg-gray-50 py-8 font-label dark:bg-gray-800 dark:text-gray-200">
+  <div class="min-h-screen bg-gray-50 py-8 font-label dark:bg-gray-800 dark:text-gray-200">
     <!-- Main Content -->
     <div class="container mx-auto px-4">
       <!-- Header -->
@@ -218,7 +218,7 @@ const formatPrice = (price) => {
               <div class="flex justify-between text-sm">
                 <span class="flex items-center gap-1 text-gray-600 dark:text-gray-400">
                   Ongkir
-                  <span v-if="shipping === 0" class="text-xs text-green-600 dark:text-green-400"
+                  <span v-if="shipping == 0" class="text-xs text-green-600 dark:text-green-400"
                     >(Gratis)</span
                   >
                 </span>

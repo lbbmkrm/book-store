@@ -6,6 +6,8 @@ import ExampleView from '@/views/ExampleView.vue'
 import LoginView from '@/views/LoginView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import SuccessOrderView from '@/views/SuccessOrderView.vue'
+import OrderView from '@/views/OrderView.vue'
+import OrderDetailView from '@/views/OrderDetailView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,7 +32,7 @@ const router = createRouter({
       path: '/checkout',
       name: 'checkout',
       component: CheckoutView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, hideNavbar: true, hideFooter: true },
       beforeEnter: (to, from, next) => {
         const cartItems = localStorage.getItem('cartItems')
         if (cartItems) {
@@ -56,6 +58,24 @@ const router = createRouter({
       },
     },
     {
+      path: '/orders',
+      name: 'orders',
+      component: OrderView,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/orders/:id',
+      name: 'order-details',
+      component: OrderDetailView,
+      meta: {
+        requiresAuth: true,
+        hideNavbar: true,
+        hideFooter: true,
+      },
+    },
+    {
       path: '/example',
       name: 'example',
       component: ExampleView,
@@ -74,14 +94,13 @@ const router = createRouter({
 
 // Navigation Guard
 router.beforeEach(async (to, from, next) => {
-  // Periksa jika rute memerlukan autentikasi
   if (to.meta.requiresAuth) {
     const token = localStorage.getItem('authToken')
 
     if (!token) {
       return next({
         path: '/login',
-        query: { redirect: to.fullPath }, // Simpan rute tujuan untuk redirect setelah login
+        query: { redirect: to.fullPath },
       })
     }
 
@@ -104,7 +123,6 @@ router.beforeEach(async (to, from, next) => {
       }
     } catch (error) {
       console.error('Error validasi token:', error)
-      // Jika terjadi kesalahan (misalnya, jaringan), hapus token dan arahkan ke login
       localStorage.removeItem('authToken')
       return next({
         path: '/login',
@@ -112,7 +130,6 @@ router.beforeEach(async (to, from, next) => {
       })
     }
   } else {
-    // Rute tidak memerlukan autentikasi, izinkan akses
     next()
   }
 })
