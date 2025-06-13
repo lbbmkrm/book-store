@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use Exception;
 use App\Models\Order;
-use App\Models\OrderDetail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -21,7 +21,8 @@ class OrderRepository
     public function getByUserId(int $id): ?Collection
     {
         try {
-            return $this->model->with('orderDetails.book')->where('user_id', $id)->get();
+            return $this->model->with('orderDetails.book')->where('user_id', $id)
+                ->orderBy('created_at', 'desc')->get();
         } catch (ModelNotFoundException $e) {
             throw new Exception('Order not found.', 404);
         } catch (QueryException $e) {
@@ -31,10 +32,10 @@ class OrderRepository
         }
     }
 
-    public function get(int $id): Order
+    public function get(int $id, $relations = []): Order
     {
         try {
-            return $this->model->with('orderDetails.book')->findOrFail($id);
+            return $this->model->with($relations)->findOrFail($id);
         } catch (ModelNotFoundException $e) {
             throw new Exception('Order not found.', 404);
         } catch (QueryException $e) {
@@ -55,6 +56,20 @@ class OrderRepository
             throw new Exception('Failed to create order due to a database error.', 422);
         } catch (Exception $e) {
             throw new Exception('Failed to create order.', 500);
+        }
+    }
+
+    public function updateStatus(Order $order, string $status): Order
+    {
+        try {
+            $order->update([
+                'status' => $status
+            ]);
+            return $order;
+        } catch (QueryException $e) {
+            throw new Exception('Failed to update order status due to a database error.', 422);
+        } catch (Exception $e) {
+            throw new Exception('Failed to update order status.', 500);
         }
     }
 }

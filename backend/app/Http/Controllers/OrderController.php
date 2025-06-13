@@ -35,7 +35,7 @@ class OrderController extends Controller
     public function show(int $id): JsonResponse
     {
         try {
-            $order = $this->orderService->getOrder($id);
+            $order = $this->orderService->getOrder($id, ['orderDetails.book']);
             $this->isAuthorized('view', $order);
             return $this->successResponse(
                 'Success',
@@ -58,6 +58,24 @@ class OrderController extends Controller
                 'Success',
                 new OrderResource($order),
                 201
+            );
+        } catch (Exception $e) {
+            return $this->failedResponse($e);
+        }
+    }
+
+    public function status(int $id, Request $request): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'status' => 'required|in:shipping,completed,failed'
+
+            ]);
+
+            $order = $this->orderService->updateStatusOrder($id, $validated['status']);
+            return $this->successResponse(
+                'Success update order status.',
+                new OrderResource($order)
             );
         } catch (Exception $e) {
             return $this->failedResponse($e);

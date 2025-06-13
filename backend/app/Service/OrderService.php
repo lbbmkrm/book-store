@@ -38,10 +38,10 @@ class OrderService
         }
     }
 
-    public function getOrder(int $orderId): ?Order
+    public function getOrder(int $orderId, $relations = []): ?Order
     {
         try {
-            return $this->orderRepo->get($orderId);
+            return $this->orderRepo->get($orderId, $relations);
         } catch (Exception $e) {
             throw new Exception(
                 $e->getMessage() ?: 'failed to retrieve order',
@@ -74,7 +74,7 @@ class OrderService
                 'user_id' => $userId,
                 'total_price' => $totalPrice,
                 'shipping_address' => $requestData['shipping_address'],
-                'status' => 'processing'
+                'status' => 'shipping'
             ]);
 
             foreach ($cart->cartDetails as $detail) {
@@ -94,6 +94,22 @@ class OrderService
             DB::rollBack();
             throw new Exception(
                 $e->getMessage() ?: 'Failed to create order',
+                $e->getCode() ?: 500
+            );
+        }
+    }
+
+    public function updateStatusOrder(int $orderId, string $status): Order
+    {
+        try {
+            DB::beginTransaction();
+            $order = $this->orderRepo->get($orderId);
+            $updatedOrder = $this->orderRepo->updateStatus($order, $status);
+            DB::commit();
+            return $updatedOrder;
+        } catch (Exception $e) {
+            throw new Exception(
+                $e->getMessage() ?: 'Failed to update order status.',
                 $e->getCode() ?: 500
             );
         }

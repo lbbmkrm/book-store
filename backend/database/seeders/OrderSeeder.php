@@ -16,7 +16,7 @@ class OrderSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'total_price' => 300000.00,
-                'status' => 'processing',
+                'status' => 'shipping',
                 'shipping_address' => 'Jl. Raya No.15, Medan',
                 'created_at' => now(),
                 'updated_at' => now(),
