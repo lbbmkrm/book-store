@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
 const router = useRouter()
+const apiUrl = import.meta.env.VITE_API_SERVER
 const userProfile = ref(JSON.parse(localStorage.getItem('user')) || {})
 const cartItems = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
@@ -14,7 +15,7 @@ const address = ref('')
 const createOrder = async () => {
   try {
     const response = await axios.post(
-      'http://localhost:8000/api/orders',
+      `${apiUrl}/orders`,
       {
         shipping_address: address.value,
       },
@@ -187,7 +188,7 @@ const formatPrice = (price) => {
                     :src="
                       item.book.img
                         ? `/storage/${item.book.img}`
-                        : 'http://127.0.0.1:8000/storage/images/mock-book.jpg'
+                        : 'http://192.168.1.100:8000/storage/images/mock-book.jpg'
                     "
                     :alt="item.book.title"
                     class="w-full h-full object-cover rounded border border-gray-200 dark:border-gray-600"

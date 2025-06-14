@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 import axios from 'axios'
 import BookCard from '@/components/BookCard.vue'
 
+const apiUrl = import.meta.env.VITE_API_SERVER
 const heroImage = ref('/assets/img/hero-section-book.jpg')
 const topBooks = ref([])
 const isLoading = ref(false)
@@ -13,7 +14,7 @@ async function fetchTopBooks() {
   isLoading.value = true
   error.value = null
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/top-books', {
+    const res = await axios.get(`${apiUrl}/top-books`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -24,6 +25,25 @@ async function fetchTopBooks() {
     error.value = 'Gagal memuat buku. Silakan coba lagi.'
   } finally {
     isLoading.value = false
+  }
+}
+
+const updateBook = async (bookId) => {
+  try {
+    const response = await axios.get(`${apiUrl}/books/${bookId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const updatedBook = response.data.data
+    const bookIndex = topBooks.value.findIndex((book) => {
+      return book.id === bookId
+    })
+    if (bookIndex !== -1) {
+      topBooks.value[bookIndex] = updatedBook
+    }
+  } catch (error) {
+    console.log(error.response.data.message)
   }
 }
 
@@ -187,6 +207,7 @@ onMounted(() => {
             v-for="book in topBooks"
             :key="book.id"
             class="flex-shrink w-full sm:w-1/2 lg:w-[45%] xl:w-1/4 max-w-sm"
+            v-on:update-book="updateBook"
           >
             <BookCard :book="book" />
           </div>

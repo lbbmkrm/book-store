@@ -8,7 +8,6 @@ use App\Models\Cart;
 use App\Models\CartDetail;
 use App\Repository\CartRepository;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Repository\CartDetailRepository;
 
 class CartService
@@ -79,7 +78,7 @@ class CartService
                 'quantity' => $quantity,
             ]);
             DB::commit();
-            return $cart->fresh();
+            return $cart->fresh()->load('cartDetails.book');
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception(

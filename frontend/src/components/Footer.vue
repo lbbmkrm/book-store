@@ -1,11 +1,12 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
+const apiUrl = import.meta.env.VITE_API_SERVER
 const categories = ref([])
 
 const fetchCategories = async function () {
   try {
-    const result = await axios.get('http://127.0.0.1:8000/api/categories') // perbaiki juga URL
+    const result = await axios.get(`${apiUrl}/categories`)
     categories.value = result.data.data
   } catch (error) {
     console.log(error?.response?.data?.message || error.message)

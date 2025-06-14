@@ -8,6 +8,7 @@ const toast = useToast()
 const route = useRoute()
 const router = useRouter()
 
+const apiUrl = import.meta.env.VITE_API_SERVER
 const order = ref(null)
 const isLoading = ref(false)
 const error = ref(null)
@@ -16,7 +17,7 @@ async function fetchOrderDetail() {
   isLoading.value = true
   error.value = null
   try {
-    const res = await axios.get(`http://127.0.0.1:8000/api/orders/${route.params.id}`, {
+    const res = await axios.get(`${apiUrl}/orders/${route.params.id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         'Content-Type': 'application/json',
@@ -37,7 +38,7 @@ async function fetchOrderDetail() {
 async function changeOrderStatus(statusOrder) {
   try {
     const response = await axios.post(
-      `http://127.0.0.1:8000/api/orders/${order.value.id}/status`,
+      `${apiUrl}/orders/${order.value.id}/status`,
       {
         status: statusOrder,
       },
@@ -269,7 +270,7 @@ onMounted(() => {
                     :src="
                       item.book.img
                         ? `/storage/${item.book.img}`
-                        : 'http://127.0.0.1:8000/storage/images/mock-book.jpg'
+                        : 'http://192.168.1.100:8000/storage/images/mock-book.jpg'
                     "
                     :alt="item.book.title"
                     class="w-full h-full object-cover"

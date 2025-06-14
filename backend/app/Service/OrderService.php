@@ -6,7 +6,6 @@ use Exception;
 use App\Models\Order;
 use App\Repository\CartRepository;
 use App\Repository\OrderRepository;
-use App\Repository\CartDetailRepository;
 use App\Repository\OrderDetailRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -62,8 +61,10 @@ class OrderService
             foreach ($cart->cartDetails as $detail) {
                 $book = $detail->book()->lockForUpdate()->first();
                 if ($book->stock < $detail->quantity) {
-                    throw new Exception("Insufficient stock for book: {$book->title}", 400);
+                    throw new Exception("Stok tidak cukup untuk buku: {$book->title}", 400);
                 }
+                $book->stock -= $detail->quantity;
+                $book->save();
             }
 
             $totalPrice = $cart->cartDetails->sum(function ($detail) {
@@ -84,7 +85,6 @@ class OrderService
                     'quantity' => $detail->quantity,
                     'price' => $detail->book->price
                 ]);
-                $detail->book->stock -= $detail->quantity;
             }
 
             $cart->cartDetails()->delete();

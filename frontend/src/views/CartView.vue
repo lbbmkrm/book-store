@@ -4,10 +4,11 @@ import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import axios from 'axios'
 
+const apiUrl = import.meta.env.VITE_API_SERVER
 const cartItems = ref([])
 const fetchCart = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/cart', {
+    const response = await axios.get(`${apiUrl}/cart`, {
       headers: {
         'content-type': 'Application/json',
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
@@ -33,7 +34,7 @@ const updateQuantity = async (itemId, quantity) => {
 
   try {
     const response = await axios.put(
-      `http://localhost:8000/api/cart/${itemId}`,
+      `${apiUrl}/cart/${itemId}`,
       {
         quantity: newQuantity,
       },
@@ -54,7 +55,7 @@ const updateQuantity = async (itemId, quantity) => {
 
 const removeItem = async (itemId) => {
   try {
-    const response = await axios.delete(`http://localhost:8000/api/cart/${itemId}`, {
+    const response = await axios.delete(`${apiUrl}/cart/${itemId}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
@@ -148,7 +149,7 @@ onMounted(() => {
                     :src="
                       item.book.img
                         ? `/storage/${item.book.img}`
-                        : 'http://127.0.0.1:8000/storage/images/mock-book.jpg'
+                        : 'http://192.168.1.100:8000/storage/images/mock-book.jpg'
                     "
                     :alt="item.book.title"
                     class="w-full h-full object-cover rounded border border-gray-200 dark:border-gray-600"

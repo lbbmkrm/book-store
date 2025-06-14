@@ -4,6 +4,7 @@ import axios from 'axios'
 import CartPlusIcon from '@/components/icons/cart-plus-icon.vue'
 import { useToast } from 'vue-toastification'
 
+const apiUrl = import.meta.env.VITE_API_SERVER
 const toast = useToast()
 const mockBook = '/assets/img/mock-book.jpg'
 const props = defineProps({
@@ -12,7 +13,7 @@ const props = defineProps({
     required: true,
   },
 })
-
+const emits = defineEmits(['update-book'])
 const formatPrice = (price) => {
   return new Intl.NumberFormat('id-ID').format(price)
 }
@@ -20,7 +21,7 @@ const formatPrice = (price) => {
 const addToCart = async (bookId) => {
   try {
     const response = await axios.post(
-      'http://localhost:8000/api/cart',
+      `${apiUrl}/cart`,
       {
         book_id: bookId,
         quantity: 1,
@@ -46,9 +47,10 @@ const addToCart = async (bookId) => {
       rtl: false,
     })
     console.log('Berhasil menambahkan buku ke cart')
+    emits('update-book', bookId)
   } catch (error) {
-    console.error(error)
-    toast.error('Terjadi Kesalahan, Coba Lagi...', {
+    console.error(error.response.data.message)
+    toast.error('Gagal menambahkan buku ke cart, coba lagi...', {
       position: 'top-center',
       timeout: 2000,
       closeOnClick: true,

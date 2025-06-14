@@ -3,6 +3,7 @@ import BookCard from '@/components/BookCard.vue'
 import { computed, onMounted, ref } from 'vue'
 import axios from 'axios'
 
+const apiUrl = import.meta.env.VITE_API_SERVER
 const books = ref([])
 const categories = ref([])
 const selectedCategory = ref('All')
@@ -12,12 +13,12 @@ const errorMessage = ref(null)
 const fetchData = async () => {
   try {
     isLoading.value = true
-    const bookResponse = await axios.get('http://localhost:8000/api/books', {
+    const bookResponse = await axios.get(`${apiUrl}/books`, {
       headers: { 'Content-Type': 'application/json' },
     })
     books.value = bookResponse.data.data
 
-    const categoryResponse = await axios.get('http://localhost:8000/api/categories', {
+    const categoryResponse = await axios.get(`${apiUrl}/categories`, {
       headers: { 'Content-Type': 'application/json' },
     })
     categories.value = categoryResponse.data.data
@@ -27,6 +28,24 @@ const fetchData = async () => {
     console.error(error)
   } finally {
     isLoading.value = false
+  }
+}
+
+const updateBook = async (bookId) => {
+  try {
+    const response = await axios.get(`${apiUrl}/books/${bookId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const updatedBook = response.data.data
+    const bookIndex = books.value.findIndex((book) => book.id === bookId)
+    if (bookIndex !== -1) {
+      books.value[bookIndex] = updatedBook
+    }
+  } catch (error) {
+    console.log(error.response.data.message)
+    alert('Gagal memperbarui data buku')
   }
 }
 
@@ -80,7 +99,12 @@ onMounted(() => {
           v-if="filteredBooks.length > 0"
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          <BookCard v-for="book in filteredBooks" :key="book.id" :book="book" />
+          <BookCard
+            v-for="book in filteredBooks"
+            :key="book.id"
+            :book="book"
+            v-on:update-book="updateBook"
+          />
         </div>
         <div v-else class="text-center text-gray-500 dark:text-gray-400 mt-12 font-label">
           Tidak ada buku yang tersedia

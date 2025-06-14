@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
+const apiUrl = import.meta.env.VITE_API_SERVER
 const orders = ref([])
 const isLoading = ref(false)
 const error = ref(null)
@@ -10,7 +11,7 @@ async function fetchOrders() {
   isLoading.value = true
   error.value = null
   try {
-    const res = await axios.get('http://127.0.0.1:8000/api/orders', {
+    const res = await axios.get(`${apiUrl}/orders`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         'Content-Type': 'application/json',
@@ -24,25 +25,6 @@ async function fetchOrders() {
     error.value = 'Gagal memuat pesanan. Silakan coba lagi.'
   } finally {
     isLoading.value = false
-  }
-}
-
-async function cancelOrder(orderId) {
-  if (!confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')) return
-  try {
-    await axios.post(
-      `http://127.0.0.1:8000/api/orders/${orderId}/cancel`,
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    )
-    fetchOrders() // Refresh order list after cancellation
-  } catch (err) {
-    console.error('Error cancelling order:', err.message)
-    error.value = 'Gagal membatalkan pesanan. Silakan coba lagi.'
   }
 }
 const formatPrice = (price) => {
@@ -130,13 +112,6 @@ onMounted(() => {
                 >
                   Lihat Detail
                 </RouterLink>
-                <button
-                  v-if="order.status === 'pending'"
-                  @click="cancelOrder(order.id)"
-                  class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors duration-200"
-                >
-                  Batalkan
-                </button>
               </div>
             </div>
 

@@ -105,7 +105,7 @@ router.beforeEach(async (to, from, next) => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/authenticated', {
+      const response = await fetch(`${import.meta.env.VITE_API_SERVER}/authenticated`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

@@ -1,19 +1,22 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
+const apiUrl = import.meta.env.VITE_API_SERVER
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const login = async () => {
   try {
-    const response = await axios.post('http://127.0.0.1:8000/api/login', {
+    const response = await axios.post(`${apiUrl}/login`, {
       email: email.value,
       password: password.value,
     })
     if (response.data.token) {
       localStorage.setItem('authToken', response.data.token)
       localStorage.setItem('user', JSON.stringify(response.data.data))
-
       window.location.href = '/'
     }
   } catch (error) {
@@ -26,6 +29,20 @@ const login = async () => {
         errorMessage.value = error.response.data.message || 'Login failed'
       }
     }
+    toast.error(errorMessage.value, {
+      position: 'top-center',
+      timeout: 2000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: false,
+      draggable: true,
+      draggablePercent: 0.5,
+      showCloseButtonOnHover: false,
+      hideProgressBar: true,
+      closeButton: false,
+      icon: true,
+      rtl: false,
+    })
   }
 }
 </script>
@@ -41,9 +58,6 @@ const login = async () => {
         <h1 class="text-[32px] text-gray-800 dark:text-gray-200">Sign in to your account</h1>
       </div>
       <div class="mb-6">
-        <p v-if="errorMessage" class="text-red-500 text-sm mb-4 dark:text-red-400 text-center">
-          {{ errorMessage }}
-        </p>
         <form
           v-on:submit.prevent="login"
           class="space-y-6 hover:shadow-lg transition-shadow duration-300 dark:hover:shadow-xl"
@@ -93,8 +107,6 @@ const login = async () => {
             </div>
             <button
               class="cursor-pointer w-full bg-indigo-600 text-white font-semibold rounded-lg px-4 py-2 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-              type="submit"
-              v-on:click="login"
             >
               Sign in
             </button>
