@@ -61,7 +61,7 @@ const addToCart = async (bookId) => {
       showCloseButtonOnHover: false,
       hideProgressBar: true,
       closeButton: false,
-      icon: CartPlusIcon,
+      icon: true,
       rtl: false,
     })
   }

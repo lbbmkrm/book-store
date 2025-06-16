@@ -1,33 +1,34 @@
+<!-- src/components/Login.vue -->
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import { useAuthStore } from '../stores/auth'
 import { useToast } from 'vue-toastification'
+import { useRouter, useRoute } from 'vue-router'
 
 const toast = useToast()
-const apiUrl = import.meta.env.VITE_API_SERVER
+const authStore = useAuthStore()
+const router = useRouter()
+const route = useRoute()
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
+
 const login = async () => {
   try {
-    const response = await axios.post(`${apiUrl}/login`, {
+    await authStore.login({
       email: email.value,
       password: password.value,
     })
-    if (response.data.token) {
-      localStorage.setItem('authToken', response.data.token)
-      localStorage.setItem('user', JSON.stringify(response.data.data))
-      window.location.href = '/'
-    }
+    const redirectPath = route.query.redirect ? route.query.redirect : '/'
+    console.log('Redirecting to:', redirectPath)
+    router.push(redirectPath)
   } catch (error) {
-    if (error.response) {
-      if (error.response.status === 422) {
-        errorMessage.value = error.response.data.message || 'Please check your input fields'
-      } else if (error.response.status === 401) {
-        errorMessage.value = 'Invalid email or password'
-      } else {
-        errorMessage.value = error.response.data.message || 'Login failed'
-      }
+    if (error.status === 422) {
+      errorMessage.value = error.message || 'Periksa kembali input Anda'
+    } else if (error.status === 401) {
+      errorMessage.value = 'Email atau kata sandi salah'
+    } else {
+      errorMessage.value = error.message || 'Login gagal'
     }
     toast.error(errorMessage.value, {
       position: 'top-center',
@@ -46,6 +47,7 @@ const login = async () => {
   }
 }
 </script>
+
 <template>
   <div
     class="flex items-center justify-center min-h-screen px-4 py-8 bg-gradient-to-r from-gray-50 to-gray-100 dark:bg-gray-900 dark:from-gray-800 dark:to-gray-700"
@@ -59,7 +61,7 @@ const login = async () => {
       </div>
       <div class="mb-6">
         <form
-          v-on:submit.prevent="login"
+          @submit.prevent="login"
           class="space-y-6 hover:shadow-lg transition-shadow duration-300 dark:hover:shadow-xl"
         >
           <div class="space-y-4 dark:text-gray-200">

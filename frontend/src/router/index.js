@@ -8,6 +8,7 @@ import CheckoutView from '@/views/CheckoutView.vue'
 import SuccessOrderView from '@/views/SuccessOrderView.vue'
 import OrderView from '@/views/OrderView.vue'
 import OrderDetailView from '@/views/OrderDetailView.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -93,42 +94,14 @@ const router = createRouter({
 })
 
 // Navigation Guard
-router.beforeEach(async (to, from, next) => {
-  if (to.meta.requiresAuth) {
-    const token = localStorage.getItem('authToken')
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
 
-    if (!token) {
-      return next({
-        path: '/login',
-        query: { redirect: to.fullPath },
-      })
-    }
-
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_SERVER}/authenticated`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (response.ok) {
-        next()
-      } else {
-        localStorage.removeItem('authToken')
-        return next({
-          path: '/login',
-          query: { redirect: to.fullPath },
-        })
-      }
-    } catch (error) {
-      console.error('Error validasi token:', error)
-      localStorage.removeItem('authToken')
-      return next({
-        path: '/login',
-        query: { redirect: to.fullPath },
-      })
-    }
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath },
+    })
   } else {
     next()
   }

@@ -1,5 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
+import { useToast } from 'vue-toastification'
 import HamburgerIcon from './icons/hamburger-icon.vue'
 import CrossIcon from './icons/cross-icon.vue'
 import HomeIcon from './icons/home-icon.vue'
@@ -10,19 +12,63 @@ import OrderIcon from './icons/order-icon.vue'
 import ProfileIcon from './icons/profile-icon.vue'
 import SunIcon from './icons/sun-icon.vue'
 import MoonIcon from './icons/moon-icon.vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import LogoutIcon from './icons/logout-icon.vue'
 
+const router = useRouter()
+const authStore = useAuthStore()
+const toast = useToast()
 const isMenuOpen = ref(false)
 const isDarkMode = ref(false)
+const isProfileDropdownOpen = ref(false)
+const user = computed(() => authStore.user)
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
+
 const closeMenu = () => {
   isMenuOpen.value = false
 }
 
-// Fungsi untuk toggle dark mode
+const toggleProfileDropdown = () => {
+  if (!user.value) {
+    router.push('/login')
+    return
+  }
+  isProfileDropdownOpen.value = !isProfileDropdownOpen.value
+}
+
+const closeProfileDropdown = () => {
+  isProfileDropdownOpen.value = false
+}
+
+const logout = async () => {
+  try {
+    await authStore.logout()
+    console.log('Success Logout')
+    window.location.reload()
+  } catch (error) {
+    console.log(error)
+    console.log(localStorage.getItem('authItem'))
+    toast.error('Gagal logout coba lagi', {
+      position: 'top-center',
+      timeout: 2000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: false,
+      draggable: true,
+      draggablePercent: 0.5,
+      showCloseButtonOnHover: false,
+      hideProgressBar: true,
+      closeButton: false,
+      icon: true,
+      rtl: false,
+    })
+  }
+}
+
 const toggleDarkMode = () => {
   isDarkMode.value = !isDarkMode.value
   if (isDarkMode.value) {
@@ -33,7 +79,6 @@ const toggleDarkMode = () => {
   localStorage.setItem('theme', isDarkMode.value ? 'dark' : 'light')
 }
 
-// Inisialisasi tema saat komponen dimuat
 onMounted(() => {
   const savedTheme = localStorage.getItem('theme')
   if (
@@ -46,6 +91,12 @@ onMounted(() => {
     isDarkMode.value = false
     document.documentElement.removeAttribute('data-theme')
   }
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.profile-dropdown-container')) {
+      closeProfileDropdown()
+    }
+  })
 })
 
 const navigationButtonClass =
@@ -53,8 +104,11 @@ const navigationButtonClass =
 </script>
 
 <template>
-  <nav class="fixed w-full top-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-md z-50">
-    <div class="w-full p-4 flex justify-between items-center dark:text-white">
+  <nav class="fixed w-full top-0 left-0 right-0 bg-transparent dark:bg-gray-800 shadow-md z-50">
+    <div
+      class="w-full p-4 flex justify-between items-center dark:text-white transition-color"
+      :class="isMenuOpen ? 'bg-white' : 'backdrop-blur-lg'"
+    >
       <!-- Logo -->
       <div class="logo flex items-center dark:text-white">
         <h1 class="font-header text-xl md:text-3xl font-light">mystore</h1>
@@ -75,9 +129,63 @@ const navigationButtonClass =
         <RouterLink to="/orders" :class="navigationButtonClass">
           <OrderIcon />
         </RouterLink>
-        <button :class="navigationButtonClass">
-          <ProfileIcon />
-        </button>
+
+        <!-- Profile Dropdown Container -->
+        <div class="relative profile-dropdown-container">
+          <button @click="toggleProfileDropdown" :class="navigationButtonClass">
+            <ProfileIcon />
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div
+            v-if="isProfileDropdownOpen"
+            class="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50 transform transition-all duration-200 ease-in-out"
+          >
+            <!-- User Info -->
+            <div
+              class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex gap-4 items-center"
+            >
+              <div class="h-4 w-4">
+                <img
+                  :src="
+                    user.img
+                      ? `/storage/${user.img}`
+                      : `http://127.0.0.1:8000/storage/images/mock-profile.jpg`
+                  "
+                  :alt="user.name"
+                  class="w-full h-full"
+                />
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-900 dark:text-white">
+                  {{ user ? user.name : '' }}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ user ? user.email : '' }}</p>
+              </div>
+            </div>
+
+            <!-- Dropdown Menu Items -->
+            <div class="py-1">
+              <RouterLink
+                to="/profile"
+                @click="closeProfileDropdown"
+                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+              >
+                <ProfileIcon class="h-4 w-4" />
+                View Profile
+              </RouterLink>
+
+              <button
+                @click="logout"
+                class="cursor-pointer w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
+              >
+                <LogoutIcon class="h-4 w-4" />
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Tombol Toggle Dark Mode (Desktop) -->
         <button @click="toggleDarkMode" :class="navigationButtonClass" title="Toggle Dark Mode">
           <SunIcon v-if="isDarkMode" />
@@ -117,6 +225,15 @@ const navigationButtonClass =
               <CrossIcon />
             </button>
           </div>
+
+          <!-- User Info Section (Mobile) -->
+          <div class="px-3 py-2 border-b border-gray-200 dark:border-gray-700 mb-2">
+            <p class="text-sm font-medium text-gray-900 dark:text-white">
+              {{ user ? user.name : '' }}
+            </p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ user ? user.email : '' }}</p>
+          </div>
+
           <RouterLink to="/" @click="closeMenu" :class="navigationButtonClass">
             <HomeIcon />Home
           </RouterLink>
@@ -132,9 +249,19 @@ const navigationButtonClass =
           <RouterLink to="/orders" @click="closeMenu" :class="navigationButtonClass">
             <OrderIcon />Orders
           </RouterLink>
-          <RouterLink @click="closeMenu" :class="navigationButtonClass">
+          <RouterLink to="/profile" @click="closeMenu" :class="navigationButtonClass">
             <ProfileIcon />Profile
           </RouterLink>
+
+          <!-- Logout Button (Mobile) -->
+          <button
+            @click="logout"
+            class="flex items-center cursor-pointer rounded-md px-3 py-2 text-red-600 dark:text-red-400 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300 ease-in-out hover:scale-105 gap-2"
+          >
+            <LogoutIcon class="w-4 h-4" />
+            Logout
+          </button>
+
           <!-- Tombol Toggle Dark Mode (Mobile) -->
           <button @click="toggleDarkMode" :class="navigationButtonClass" title="Toggle Dark Mode">
             <SunIcon v-if="isDarkMode" />

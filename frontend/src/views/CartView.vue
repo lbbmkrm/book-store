@@ -18,7 +18,7 @@ const fetchCart = async () => {
     localStorage.setItem('cartItems', JSON.stringify(response.data.data))
     console.log('Cart items fetched successfully')
   } catch (error) {
-    console.error('Error fetching cart items:', error)
+    console.error('Error fetching cart items:', error.response.data)
     error.value = 'Gagal memuat keranjang belanja. Silakan coba lagi.'
   }
 }
