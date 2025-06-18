@@ -49,37 +49,11 @@ async function changeOrderStatus(statusOrder) {
         },
       },
     )
-    toast.success(response.data.message, {
-      position: 'top-center',
-      timeout: 2000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: false,
-      draggable: true,
-      draggablePercent: 0.5,
-      showCloseButtonOnHover: false,
-      hideProgressBar: true,
-      closeButton: false,
-      icon: true,
-      rtl: false,
-    })
+    toast.success(response.data.message)
     await fetchOrderDetail()
   } catch (err) {
     console.error('Error cancelling order:', err.message)
-    toast.error('Terjadi Kesalahan, Coba Lagi...', {
-      position: 'top-center',
-      timeout: 2000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: false,
-      draggable: true,
-      draggablePercent: 0.5,
-      showCloseButtonOnHover: false,
-      hideProgressBar: true,
-      closeButton: false,
-      icon: true,
-      rtl: false,
-    })
+    toast.error('Terjadi Kesalahan, Coba Lagi...')
   }
 }
 onMounted(() => {

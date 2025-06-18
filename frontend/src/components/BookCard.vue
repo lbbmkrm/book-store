@@ -32,38 +32,12 @@ const addToCart = async (bookId) => {
         },
       },
     )
-    toast.success(response.data.message, {
-      position: 'top-center',
-      timeout: 2000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: false,
-      draggable: true,
-      draggablePercent: 0.5,
-      showCloseButtonOnHover: false,
-      hideProgressBar: true,
-      closeButton: false,
-      icon: CartPlusIcon,
-      rtl: false,
-    })
+    toast.success(response.data.message)
     console.log('Berhasil menambahkan buku ke cart')
     emits('update-book', bookId)
   } catch (error) {
     console.error(error.response.data.message)
-    toast.error('Gagal menambahkan buku ke cart, coba lagi...', {
-      position: 'top-center',
-      timeout: 2000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: false,
-      draggable: true,
-      draggablePercent: 0.5,
-      showCloseButtonOnHover: false,
-      hideProgressBar: true,
-      closeButton: false,
-      icon: true,
-      rtl: false,
-    })
+    toast.error('Gagal menambahkan buku ke cart, coba lagi...')
   }
 }
 </script>

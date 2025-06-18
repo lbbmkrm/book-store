@@ -181,7 +181,7 @@ onMounted(() => {
                       :src="
                         item.book?.img
                           ? `/storage/${item.book.img}`
-                          : 'http://192.168.1.100:8000/storage/images/mock-book.jpg'
+                          : 'http://127.0.0.1:8000/storage/images/mock-book.jpg'
                       "
                       :alt="item.book?.title || 'Book'"
                       class="w-full h-full object-cover rounded border border-gray-200 dark:border-gray-600"

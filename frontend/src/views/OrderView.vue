@@ -17,7 +17,6 @@ async function fetchOrders() {
         'Content-Type': 'application/json',
       },
     })
-    console.log(res)
     orders.value = res.data.data || []
   } catch (err) {
     console.error('Error fetching orders:', err.message)

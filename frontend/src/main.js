@@ -13,6 +13,18 @@ app.use(Toast, {
   transition: 'Vue-Toastification__fade',
   maxToasts: 20,
   newestOnTop: true,
+  position: 'top-center',
+  timeout: 2000,
+  closeOnClick: true,
+  pauseOnFocusLoss: true,
+  pauseOnHover: false,
+  draggable: true,
+  draggablePercent: 0.5,
+  showCloseButtonOnHover: false,
+  hideProgressBar: true,
+  closeButton: false,
+  icon: true,
+  rtl: false,
 })
 
 app.use(router)

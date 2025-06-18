@@ -45,7 +45,7 @@ const router = createRouter({
     },
     {
       path: '/successOrder',
-      name: 'SuccessOrder',
+      name: 'successOrder',
       component: SuccessOrderView,
       meta: { requiresAuth: true, hideFooter: true, hideNavbar: true },
     },

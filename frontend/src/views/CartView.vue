@@ -1,71 +1,42 @@
 <script setup>
 import ThrashIcon from '@/components/icons/thrash-icon.vue'
 import { ref, computed, onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
-import axios from 'axios'
+import { RouterLink, useRouter } from 'vue-router'
+import { useCart } from '@/stores/cart'
+import { useToast } from 'vue-toastification'
 
-const apiUrl = import.meta.env.VITE_API_SERVER
-const cartItems = ref([])
+const router = useRouter()
+const cartStore = useCart()
+const toast = useToast()
 const fetchCart = async () => {
   try {
-    const response = await axios.get(`${apiUrl}/cart`, {
-      headers: {
-        'content-type': 'Application/json',
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-      },
-    })
-    cartItems.value = response.data.data.cartDetails
-    localStorage.setItem('cartItems', JSON.stringify(response.data.data))
+    await cartStore.fetchCart()
     console.log('Cart items fetched successfully')
   } catch (error) {
-    console.error('Error fetching cart items:', error.response.data)
-    error.value = 'Gagal memuat keranjang belanja. Silakan coba lagi.'
+    if (error.response?.status === 401) {
+      router.push('/login')
+    } else {
+      console.log(cartStore.errorMessage || 'Terjadi kesalahan')
+    }
   }
 }
 
 const updateQuantity = async (itemId, quantity) => {
-  const item = cartItems.value.find((item) => item.id === itemId)
-  if (!item) return
-  const newQuantity = item.quantity + quantity
-
-  if (newQuantity < 1 || newQuantity > item.stock) {
-    return
-  }
-
   try {
-    const response = await axios.put(
-      `${apiUrl}/cart/${itemId}`,
-      {
-        quantity: newQuantity,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-        },
-      },
-    )
-
-    item.quantity = newQuantity
-    console.log('Quantity updated successfully:')
+    await cartStore.updateQuantity(itemId, quantity)
+    console.log('success update item quantity')
   } catch (error) {
-    console.error('Error updating quantity:', error)
+    toast.error('Gagal memperbarui item')
+    console.error(cartStore.errorMessage)
   }
 }
 
 const removeItem = async (itemId) => {
   try {
-    const response = await axios.delete(`${apiUrl}/cart/${itemId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-      },
-    })
-
-    cartItems.value = cartItems.value.filter((item) => item.id !== itemId)
-    console.log('Item removed successfully:')
+    await cartStore.removeItem(itemId)
   } catch (error) {
-    console.error('Error removing item:', error)
+    toast.error('Gagal menghapus item')
+    console.error('Error removing item:', error.response.data)
   }
 }
 
@@ -78,7 +49,7 @@ const formatPrice = (price) => {
 
 const subtotal = computed(() => {
   let total = 0
-  cartItems.value.forEach((item) => {
+  cartStore.cartItems.forEach((item) => {
     total += item.book.price * item.quantity
   })
   localStorage.setItem('subtotal', total)
@@ -102,13 +73,6 @@ const total = computed(() => {
   return subtotal.value + shipping.value
 })
 
-const setCheckoutData = () => {
-  localStorage.setItem('cartItems', JSON.stringify(cartItems.value))
-  localStorage.setItem('subtotal', subtotal.value)
-  localStorage.setItem('shippingCost', shipping.value)
-  localStorage.setItem('total', total.value)
-}
-
 onMounted(() => {
   fetchCart()
 })
@@ -117,7 +81,7 @@ onMounted(() => {
 <template class="dark:bg-transparent">
   <div class="min-h-screen mt-18 bg-gray-50 py-8 font-sans dark:bg-gray-800 dark:text-gray-200">
     <div
-      v-if="cartItems.length > 0"
+      v-if="cartStore.cartItems.length > 0"
       class="container mx-auto px-4 dark:bg-gray-800 dark:border-gray-700"
     >
       <!-- Header -->
@@ -126,7 +90,7 @@ onMounted(() => {
       >
         <h1 class="text-2xl font-bold font-header">Keranjang Belanja</h1>
         <span class="text-gray-600 text-sm lg:text-base dark:text-gray-400 font-label">
-          {{ cartItems.length }} item
+          {{ cartStore.cartItems.length }} item
         </span>
       </div>
 
@@ -140,7 +104,7 @@ onMounted(() => {
             <div class="divide-y divide-gray-200 dark:divide-gray-700">
               <!-- Item -->
               <div
-                v-for="item in cartItems"
+                v-for="item in cartStore.cartItems"
                 :key="item.id"
                 class="flex items-start gap-4 lg:gap-6 py-4 dark:border-b dark:border-gray-700"
               >
@@ -149,7 +113,7 @@ onMounted(() => {
                     :src="
                       item.book.img
                         ? `/storage/${item.book.img}`
-                        : 'http://192.168.1.100:8000/storage/images/mock-book.jpg'
+                        : 'http://127.0.0.1:8000/storage/images/mock-book.jpg'
                     "
                     :alt="item.book.title"
                     class="w-full h-full object-cover rounded border border-gray-200 dark:border-gray-600"
@@ -264,7 +228,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div v-else="cartItems.length === 0" class="container mt-18 mx-auto px-4 py-12 text-center">
+    <div v-else class="container mt-18 mx-auto px-4 py-12 text-center">
       <h2 class="text-2xl font-bold mb-4">Keranjang Anda Kosong</h2>
       <p class="text-gray-600 mb-6">Tambahkan beberapa buku untuk memulai belanja!</p>
       <RouterLink
