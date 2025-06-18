@@ -1,6 +1,10 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
+import GoogleIcon from './icons/google-icon.vue'
+import InstagramIcon from './icons/instagram-icon.vue'
+import FacebookIcon from './icons/facebook-icon.vue'
+import TiktokIcon from './icons/tiktok-icon.vue'
 const apiUrl = import.meta.env.VITE_API_SERVER
 const categories = ref([])
 
@@ -19,10 +23,8 @@ onMounted(() => {
 })
 </script>
 <template>
-  <footer
-    class="min-h-screen bg-white text-gray-800 dark:bg-gray-800 dark:text-white py-16 relative flex items-end"
-  >
-    <div class="container mx-auto px-4 max-w-6xl relative z-10">
+  <footer class="bg-white text-gray-800 dark:bg-gray-800 dark:text-white py-16 flex items-end">
+    <div class="container mx-auto px-4 max-w-6xl">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
         <!-- Company Info -->
         <div class="space-y-4">
@@ -31,27 +33,27 @@ onMounted(() => {
             Toko buku online terpercaya dengan koleksi terlengkap. Kami menyediakan berbagai jenis
             buku berkualitas untuk semua kalangan pembaca.
           </p>
-          <div class="flex space-x-3 pt-2">
+          <div class="flex space-x-3 pt-2 w-full justify-evenly">
             <a
               href="#"
-              class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white hover:bg-gray-500 transition"
-              >📱</a
-            >
+              class="w-4 h-4 bg-transparent rounded-full flex items-center justify-center text-gray-600 dark:text-gray-50 hover:text-white transition"
+              ><GoogleIcon
+            /></a>
             <a
               href="#"
-              class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white hover:bg-gray-500 transition"
-              >👤</a
-            >
+              class="w-4 h-4 bg-transparent rounded-full flex items-center justify-center text-gray-600 dark:text-gray-50 hover:text-white transition"
+              ><InstagramIcon
+            /></a>
             <a
               href="#"
-              class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white hover:bg-gray-500 transition"
-              >📸</a
-            >
+              class="w-4 h-4 bg-transparent rounded-full flex items-center justify-center text-gray-600 dark:text-gray-50 hover:text-white transition"
+              ><FacebookIcon
+            /></a>
             <a
               href="#"
-              class="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white hover:bg-gray-500 transition"
-              >🐦</a
-            >
+              class="w-4 h-4 bg-transparent rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-white transition"
+              ><TiktokIcon
+            /></a>
           </div>
         </div>
 
@@ -107,7 +109,7 @@ onMounted(() => {
           <div class="space-y-3 text-sm">
             <h3 class="text-xl font-bold">Hubungi Kami</h3>
             <div class="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-              <span class="text-sm">📍</span> <span>Jl. Buku Raya No. 123, Jakarta</span>
+              <span class="text-sm">📍</span> <span>Jl. Banyak Cakap No. 123, Medan</span>
             </div>
             <div class="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
               <span class="text-sm">📞</span> <span>(021) 1234-5678</span>

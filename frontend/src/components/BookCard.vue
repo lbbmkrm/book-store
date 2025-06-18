@@ -3,8 +3,10 @@ import { defineProps } from 'vue'
 import axios from 'axios'
 import CartPlusIcon from '@/components/icons/cart-plus-icon.vue'
 import { useToast } from 'vue-toastification'
+import { useRouter } from 'vue-router'
 
 const apiUrl = import.meta.env.VITE_API_SERVER
+const router = useRouter()
 const toast = useToast()
 const mockBook = '/assets/img/mock-book.jpg'
 const props = defineProps({
@@ -36,8 +38,12 @@ const addToCart = async (bookId) => {
     console.log('Berhasil menambahkan buku ke cart')
     emits('update-book', bookId)
   } catch (error) {
-    console.error(error.response.data.message)
-    toast.error('Gagal menambahkan buku ke cart, coba lagi...')
+    if (error.response.status === 401) {
+      router.push('/login')
+    } else {
+      console.error(error.response.data.message)
+      toast.error('Gagal menambahkan buku ke cart, coba lagi...')
+    }
   }
 }
 </script>

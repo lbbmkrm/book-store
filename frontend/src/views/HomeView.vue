@@ -63,11 +63,6 @@ const features = ref([
     title: 'Harga Bersaing',
     description: 'Dapatkan buku berkualitas dengan harga terbaik dan diskon menarik.',
   },
-  {
-    icon: '🎁',
-    title: 'Program Loyalitas',
-    description: 'Kumpulkan poin dari setiap pembelian untuk ditukarkan dengan hadiah.',
-  },
 ])
 
 const testimonials = ref([

@@ -14,15 +14,21 @@ import SunIcon from './icons/sun-icon.vue'
 import MoonIcon from './icons/moon-icon.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useCart } from '@/stores/cart'
 import LogoutIcon from './icons/logout-icon.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const cartStore = useCart()
 const toast = useToast()
 const isMenuOpen = ref(false)
 const isDarkMode = ref(false)
 const isProfileDropdownOpen = ref(false)
 const user = computed(() => authStore.user)
+
+const cartItemsCount = computed(() => {
+  return cartStore.cartItems.reduce((total, item) => total + item.quantity, 0)
+})
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
@@ -123,9 +129,18 @@ const navigationButtonClass =
       </div>
       <!-- Right Nav -->
       <div class="right-navigation hidden md:flex items-center justify-end gap-4 dark:text-white">
-        <RouterLink to="/cart" :class="navigationButtonClass">
+        <!-- Cart -->
+        <RouterLink to="/cart" :class="navigationButtonClass" class="relative">
           <CartIcon />
+          <!-- Badge cart -->
+          <span
+            v-if="cartItemsCount > 0"
+            class="absolute top-2 right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full min-w-[20px] h-5"
+          >
+            {{ cartItemsCount > 99 ? '99+' : cartItemsCount }}
+          </span>
         </RouterLink>
+
         <RouterLink to="/orders" :class="navigationButtonClass">
           <OrderIcon />
         </RouterLink>
@@ -243,9 +258,18 @@ const navigationButtonClass =
           <RouterLink @click="closeMenu" :class="navigationButtonClass">
             <AboutIcon />About
           </RouterLink>
-          <RouterLink to="/cart" @click="closeMenu" :class="navigationButtonClass">
+
+          <!-- Cart dengan Badge (Mobile) -->
+          <RouterLink to="/cart" @click="closeMenu" :class="navigationButtonClass" class="relative">
             <CartIcon />Cart
+            <span
+              v-if="cartItemsCount > 0"
+              class="ml-auto inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full min-w-[20px] h-5"
+            >
+              {{ cartItemsCount > 99 ? '99+' : cartItemsCount }}
+            </span>
           </RouterLink>
+
           <RouterLink to="/orders" @click="closeMenu" :class="navigationButtonClass">
             <OrderIcon />Orders
           </RouterLink>
