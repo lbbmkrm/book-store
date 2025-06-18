@@ -3,7 +3,7 @@ import axios from 'axios'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 const apiUrl = import.meta.env.VITE_API_SERVER
-export const useCart = defineStore('cart', () => {
+export const useCartStore = defineStore('cart', () => {
   const router = useRouter()
   const cart = ref({})
   const cartItems = ref([])

@@ -3,7 +3,14 @@ import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import axios from 'axios'
 import BookCard from '@/components/BookCard.vue'
+import CheckboxIcon from '@/components/icons/checkbox-icon.vue'
+import ShippingFastIcon from '@/components/icons/shipping-fast-icon.vue'
+import CheapDollarIcon from '@/components/icons/cheap-dollar-icon.vue'
+import QuoteIcon from '@/components/icons/quote-icon.vue'
+import UserIcon from '@/components/icons/user-icon.vue'
+import { useCartStore } from '@/stores/cart'
 
+const cartStore = useCartStore()
 const apiUrl = import.meta.env.VITE_API_SERVER
 const heroImage = ref('/assets/img/hero-section-book.jpg')
 const topBooks = ref([])
@@ -47,47 +54,27 @@ const updateBook = async (bookId) => {
   }
 }
 
-const features = ref([
-  {
-    icon: '📦',
-    title: 'Pengiriman Cepat',
-    description: 'Buku sampai di tangan Anda dalam waktu 1-3 hari kerja ke seluruh Indonesia.',
-  },
-  {
-    icon: '✅',
-    title: 'Buku Original',
-    description: 'Semua buku yang kami jual adalah asli dengan kualitas terbaik.',
-  },
-  {
-    icon: '💰',
-    title: 'Harga Bersaing',
-    description: 'Dapatkan buku berkualitas dengan harga terbaik dan diskon menarik.',
-  },
-])
-
 const testimonials = ref([
   {
-    name: 'Budi Santoso',
+    name: 'Example Name A.',
     role: 'Mahasiswa',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
     text: 'Buku yang saya pesan selalu dalam kondisi baik dan pengirimannya cepat. Koleksinya lengkap dan harganya terjangkau!',
   },
   {
-    name: 'Siti Nurhaliza',
+    name: 'Example Name B.',
     role: 'Guru',
-    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
     text: 'Sebagai guru, saya sering membeli buku referensi di sini. Pilihan bukunya berkualitas dan sangat membantu untuk mengajar.',
   },
   {
-    name: 'Reza Rahadian',
+    name: 'Example Name C.',
     role: 'Profesional',
-    avatar: 'https://randomuser.me/api/portraits/men/67.jpg',
     text: 'Layanan pelanggan yang responsif dan profesional. Saya sudah berlangganan selama 2 tahun dan tidak pernah kecewa.',
   },
 ])
 
 onMounted(() => {
   fetchTopBooks()
+  cartStore.fetchCart()
 })
 </script>
 
@@ -140,7 +127,7 @@ onMounted(() => {
                 <div class="text-sm text-gray-600 dark:text-gray-400">Pembaca Puas</div>
               </div>
               <div>
-                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">4.9★</div>
+                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">4.9</div>
                 <div class="text-sm text-gray-600 dark:text-gray-400">Rating</div>
               </div>
             </div>
@@ -229,16 +216,42 @@ onMounted(() => {
 
         <div class="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
           <div
-            v-for="feature in features"
-            :key="feature.title"
             class="flex-1 min-w-64 max-w-sm p-6 flex flex-col items-center text-center bg-gray-50 dark:bg-gray-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
           >
-            <div class="text-4xl mb-4">{{ feature.icon }}</div>
+            <div class="text-4xl mb-4">
+              <CheckboxIcon class="w-16 h-16 text-green-500 dark:text-green-400" />
+            </div>
             <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3 font-header">
-              {{ feature.title }}
+              Buku Original
             </h3>
             <p class="text-gray-600 dark:text-gray-300 font-body leading-relaxed">
-              {{ feature.description }}
+              Semua buku yang kami jual adalah asli dengan kualitas terbaik.
+            </p>
+          </div>
+          <div
+            class="flex-1 min-w-64 max-w-sm p-6 flex flex-col items-center text-center bg-gray-50 dark:bg-gray-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          >
+            <div class="text-4xl mb-4">
+              <CheapDollarIcon class="w-16 h-16 text-amber-500 dark:text-amber-400" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3 font-header">
+              Harga Bersaing
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 font-body leading-relaxed">
+              Dapatkan buku berkualitas dengan harga terbaik dan diskon menarik.
+            </p>
+          </div>
+          <div
+            class="flex-1 min-w-64 max-w-sm p-6 flex flex-col items-center text-center bg-gray-50 dark:bg-gray-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          >
+            <div class="text-4xl mb-4">
+              <ShippingFastIcon class="w-16 h-16 text-sky-500 dark:text-sky-400" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3 font-header">
+              Pengiriman Cepat
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 font-body leading-relaxed">
+              Buku sampai di tangan Anda dalam waktu 1-3 hari kerja ke seluruh Indonesia.
             </p>
           </div>
         </div>
@@ -264,19 +277,15 @@ onMounted(() => {
             class="flex-1 min-w-80 max-w-sm p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <div class="mb-6">
-              <svg class="w-8 h-8 text-indigo-500 mb-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14,17H17L19,13V7H13V13H16M6,17H9L11,13V7H5V13H8L6,17Z" />
-              </svg>
+              <QuoteIcon class="w-8 h-8 text-indigo-500 mb-4" />
               <p class="text-gray-600 dark:text-gray-300 italic font-body leading-relaxed">
                 {{ testimonial.text }}
               </p>
             </div>
 
             <div class="flex items-center">
-              <img
-                :src="testimonial.avatar"
-                :alt="testimonial.name"
-                class="rounded-full w-12 h-12 object-cover mr-4 border-2 border-indigo-500"
+              <UserIcon
+                class="rounded-full w-8 h-8 object-cover mr-4 text-gray-500 dark:text-gray-100"
               />
               <div>
                 <h4 class="text-gray-800 dark:text-gray-100 font-semibold font-header">

@@ -14,12 +14,13 @@ import SunIcon from './icons/sun-icon.vue'
 import MoonIcon from './icons/moon-icon.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useCart } from '@/stores/cart'
 import LogoutIcon from './icons/logout-icon.vue'
+import UserIcon from './icons/user-icon.vue'
+import { useCartStore } from '@/stores/cart'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const cartStore = useCart()
+const cartStore = useCartStore()
 const toast = useToast()
 const isMenuOpen = ref(false)
 const isDarkMode = ref(false)
@@ -117,7 +118,7 @@ const navigationButtonClass =
     >
       <!-- Logo -->
       <div class="logo flex items-center dark:text-white">
-        <h1 class="font-header text-xl md:text-3xl font-light">mystore</h1>
+        <a href="/" class="font-header text-xl md:text-3xl font-light">mystore</a>
       </div>
       <!-- Center Nav -->
       <div
@@ -160,16 +161,8 @@ const navigationButtonClass =
             <div
               class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex gap-4 items-center"
             >
-              <div class="h-4 w-4">
-                <img
-                  :src="
-                    user.img
-                      ? `/storage/${user.img}`
-                      : `http://127.0.0.1:8000/storage/images/mock-profile.jpg`
-                  "
-                  :alt="user.name"
-                  class="w-full h-full"
-                />
+              <div class="h-6 w-6">
+                <UserIcon class="w-full h-full text-gray-500 dark:text-gray-100" />
               </div>
               <div>
                 <p class="text-sm font-medium text-gray-900 dark:text-white">

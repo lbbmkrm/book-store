@@ -1,4 +1,7 @@
 <script setup>
+import CheckFillIcon from '@/components/icons/check-fill-icon.vue'
+import CreditCardBuyerIcon from '@/components/icons/credit-card-buyer-icon.vue'
+import InfoIcon from '@/components/icons/info-icon.vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -89,19 +92,7 @@ onMounted(() => {
           <div
             class="w-20 h-20 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center dark:bg-green-900"
           >
-            <svg
-              class="w-10 h-10 text-green-600 dark:text-green-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 13l4 4L19 7"
-              ></path>
-            </svg>
+            <CheckFillIcon class="h-18 w-18 text-green-600 dark:text-green-400" />
           </div>
           <h1 class="text-3xl font-bold font-header text-gray-900 dark:text-gray-100 mb-2">
             Pesanan Berhasil Dibuat!
@@ -208,17 +199,7 @@ onMounted(() => {
                 Metode Pembayaran
               </h3>
               <div class="flex items-center bg-gray-50 rounded-md p-4 dark:bg-gray-700">
-                <svg
-                  class="w-5 h-5 text-green-600 mr-3 dark:text-green-400"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
+                <CreditCardBuyerIcon class="w-5 h-5 text-green-500 dark:text-green-400 mr-3" />
                 <span class="text-gray-900 dark:text-gray-100"> Bayar di Tempat (COD) </span>
               </div>
             </div>
@@ -257,26 +238,13 @@ onMounted(() => {
           class="bg-blue-50 border border-blue-200 rounded-lg p-6 dark:bg-blue-900/20 dark:border-blue-800"
         >
           <div class="flex items-start">
-            <svg
-              class="w-6 h-6 text-blue-600 dark:text-blue-400 mt-1 mr-3 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
+            <InfoIcon class="w-6 h-6 text-blue-600 dark:text-blue-400 mt-1 mr-3 flex-shrink-0" />
             <div>
               <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
                 Langkah Selanjutnya
               </h3>
               <ul class="text-sm text-blue-800 dark:text-blue-200 space-y-1">
                 <li>• Pesanan Anda akan diproses dalam 1-2 hari kerja</li>
-                <li>• Anda akan menerima notifikasi ketika pesanan dikirim</li>
                 <li>• Siapkan uang tunai untuk pembayaran COD</li>
                 <li>• Pastikan alamat pengiriman dapat dijangkau kurir</li>
               </ul>
@@ -306,7 +274,7 @@ onMounted(() => {
             Ada pertanyaan tentang pesanan Anda?
           </p>
           <a
-            href="mailto:support@bookstore.com"
+            href="#"
             class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm"
           >
             Hubungi Customer Service

@@ -2,11 +2,11 @@
 import ThrashIcon from '@/components/icons/thrash-icon.vue'
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { useCart } from '@/stores/cart'
+import { useCartStore } from '@/stores/cart'
 import { useToast } from 'vue-toastification'
 
 const router = useRouter()
-const cartStore = useCart()
+const cartStore = useCartStore()
 const toast = useToast()
 const fetchCart = async () => {
   try {

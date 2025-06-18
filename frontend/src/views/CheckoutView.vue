@@ -1,20 +1,18 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router' // PERBAIKAN: hapus RouterLink karena hanya dipakai di template
+import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { useCart } from '@/stores/cart'
 import { useToast } from 'vue-toastification'
-
-// const SuccessOrderView = import('./SuccessOrderView.vue') // TIDAK PERLU karena routing pakai nama route
+import CheckFillIcon from '@/components/icons/check-fill-icon.vue'
+import { useCartStore } from '@/stores/cart'
 
 const router = useRouter()
 const apiUrl = import.meta.env.VITE_API_SERVER
 
-// PERBAIKAN: tambah reactive error dan fungsi clearError
 const error = ref(null)
 
 const userProfile = ref(JSON.parse(localStorage.getItem('user')) || {})
-const cartStore = useCart()
+const cartStore = useCartStore()
 const toast = useToast()
 const address = ref('')
 
@@ -58,9 +56,7 @@ const createOrder = async () => {
           </svg>
           Kembali ke Keranjang
         </RouterLink>
-        <h1 class="text-3xl font-bold font-header text-gray-900 dark:text-gray-100">
-          Checkout {{ `${apiUrl}/orders` }}
-        </h1>
+        <h1 class="text-3xl font-bold font-header text-gray-900 dark:text-gray-100">Checkout</h1>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -69,8 +65,6 @@ const createOrder = async () => {
             class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700"
           >
             <h2 class="text-xl font-semibold mb-6 dark:text-gray-100">Informasi Pengiriman</h2>
-
-            <!-- PERBAIKAN: ubah form untuk submit yang benar -->
             <form @submit.prevent="createOrder" class="space-y-6">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -123,18 +117,8 @@ const createOrder = async () => {
                 <div
                   class="bg-gray-50 border border-gray-200 rounded-md p-4 dark:bg-gray-700 dark:border-gray-600"
                 >
-                  <div class="flex items-center">
-                    <svg
-                      class="w-5 h-5 text-green-600 mr-3"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
+                  <div class="flex items-center gap-2">
+                    <CheckFillIcon class="w-4 h-4 text-green-600 rounded-full dark:bg-white" />
                     <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
                       Bayar di Tempat (COD)
                     </span>
