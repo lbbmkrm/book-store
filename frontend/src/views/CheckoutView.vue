@@ -36,6 +36,12 @@ const createOrder = async () => {
     toast.error('Gagal membuat pesanan')
   }
 }
+
+const getImageUrl = (bookImg) => {
+  return bookImg
+    ? `${import.meta.env.VITE_SERVER_IP}/storage/${bookImg}`
+    : import.meta.env.VITE_MOCK_IMAGE
+}
 </script>
 
 <template>
@@ -155,11 +161,7 @@ const createOrder = async () => {
               >
                 <div class="w-12 h-16 flex-shrink-0">
                   <img
-                    :src="
-                      item.book.img
-                        ? `/storage/${item.book.img}`
-                        : 'http://127.0.0.1:8000/storage/images/mock-book.jpg'
-                    "
+                    :src="getImageUrl(item.book.img)"
                     :alt="item.book.title"
                     class="w-full h-full object-cover rounded border border-gray-200 dark:border-gray-600"
                   />

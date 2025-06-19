@@ -56,6 +56,11 @@ async function changeOrderStatus(statusOrder) {
     toast.error('Terjadi Kesalahan, Coba Lagi...')
   }
 }
+const getImageUrl = (bookImg) => {
+  return bookImg
+    ? `${import.meta.env.VITE_SERVER_IP}/storage/${bookImg}`
+    : import.meta.env.VITE_MOCK_IMAGE
+}
 onMounted(() => {
   fetchOrderDetail()
 })
@@ -241,11 +246,7 @@ onMounted(() => {
                   class="w-16 h-24 bg-gray-200 dark:bg-gray-700 rounded-lg mr-4 flex items-center justify-center flex-shrink-0 overflow-hidden"
                 >
                   <img
-                    :src="
-                      item.book.img
-                        ? `/storage/${item.book.img}`
-                        : 'http://192.168.1.100:8000/storage/images/mock-book.jpg'
-                    "
+                    :src="getImageUrl(item.book.img)"
                     :alt="item.book.title"
                     class="w-full h-full object-cover"
                   />

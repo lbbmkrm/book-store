@@ -74,7 +74,6 @@ const testimonials = ref([
 
 onMounted(() => {
   fetchTopBooks()
-  cartStore.fetchCart()
 })
 </script>
 

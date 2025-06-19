@@ -3,7 +3,7 @@
 import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useToast } from 'vue-toastification'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter, useRoute, RouterLink } from 'vue-router'
 
 const toast = useToast()
 const authStore = useAuthStore()
@@ -30,20 +30,7 @@ const login = async () => {
     } else {
       errorMessage.value = error.message || 'Login gagal'
     }
-    toast.error(errorMessage.value, {
-      position: 'top-center',
-      timeout: 2000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: false,
-      draggable: true,
-      draggablePercent: 0.5,
-      showCloseButtonOnHover: false,
-      hideProgressBar: true,
-      closeButton: false,
-      icon: true,
-      rtl: false,
-    })
+    toast.error(errorMessage.value)
   }
 }
 </script>
@@ -118,10 +105,11 @@ const login = async () => {
       <div>
         <p class="mt-4 text-center text-gray-600 dark:text-gray-400">
           Don't have an account?
-          <a
+          <RouterLink
+            to="/register"
             href="#"
             class="text-indigo-600 hover:text-indigo-800 transition-colors duration-200 dark:text-indigo-400 dark:hover:text-indigo-600"
-            >Sign up</a
+            >Sign up</RouterLink
           >
         </p>
       </div>

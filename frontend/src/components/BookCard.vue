@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps } from 'vue'
+import { computed, defineProps } from 'vue'
 import axios from 'axios'
 import CartPlusIcon from '@/components/icons/cart-plus-icon.vue'
 import { useToast } from 'vue-toastification'
@@ -8,7 +8,6 @@ import { useRouter } from 'vue-router'
 const apiUrl = import.meta.env.VITE_API_SERVER
 const router = useRouter()
 const toast = useToast()
-const mockBook = '/assets/img/mock-book.jpg'
 const props = defineProps({
   book: {
     type: Object,
@@ -16,6 +15,11 @@ const props = defineProps({
   },
 })
 const emits = defineEmits(['update-book'])
+const imageUrl = computed(() => {
+  return props.book.img
+    ? `${import.meta.env.VITE_SERVER_API}/storage/${props.book.img}`
+    : import.meta.env.VITE_MOCK_IMAGE
+})
 const formatPrice = (price) => {
   return new Intl.NumberFormat('id-ID').format(price)
 }
@@ -54,7 +58,7 @@ const addToCart = async (bookId) => {
   >
     <!-- Book Image -->
     <div class="relative h-64 flex items-center justify-center">
-      <img :src="mockBook" :alt="book.title" class="w-full h-full object-cover" />
+      <img :src="imageUrl" :alt="book.title" class="w-full h-full object-cover" />
 
       <!-- Category Badge -->
       <div class="absolute top-3 left-3">

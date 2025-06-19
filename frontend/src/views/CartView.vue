@@ -1,6 +1,6 @@
 <script setup>
 import ThrashIcon from '@/components/icons/thrash-icon.vue'
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { useToast } from 'vue-toastification'
@@ -72,7 +72,11 @@ const total = computed(() => {
   localStorage.setItem('total', subtotal.value + shipping.value)
   return subtotal.value + shipping.value
 })
-
+const getImageUrl = (bookImg) => {
+  return bookImg
+    ? `${import.meta.env.VITE_SERVER_IP}/storage/${bookImg}`
+    : import.meta.env.VITE_MOCK_IMAGE
+}
 onMounted(() => {
   fetchCart()
 })
@@ -109,15 +113,7 @@ onMounted(() => {
                 class="flex items-start gap-4 lg:gap-6 py-4 dark:border-b dark:border-gray-700"
               >
                 <div class="w-16 h-20 lg:w-24 lg:h-32 flex-shrink-0">
-                  <img
-                    :src="
-                      item.book.img
-                        ? `/storage/${item.book.img}`
-                        : 'http://127.0.0.1:8000/storage/images/mock-book.jpg'
-                    "
-                    :alt="item.book.title"
-                    class="w-full h-full object-cover rounded border border-gray-200 dark:border-gray-600"
-                  />
+                  <img :src="getImageUrl(item.book.img)" :alt="item.book.title" />
                 </div>
 
                 <div class="flex-1 min-w-0 dark:text-gray-200">
@@ -181,11 +177,12 @@ onMounted(() => {
 
           <!-- Continue Shopping -->
           <div class="mt-6 pt-4 border-t border-gray-200 lg:border-0 dark:border-gray-700">
-            <button
+            <RouterLink
+              to="/shop"
               class="cursor-pointer px-2 lg:px-3 py-1 lg:py-2 text-sm text-gray-600 font-label hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
             >
               ← Lanjutkan Belanja
-            </button>
+            </RouterLink>
           </div>
         </div>
 

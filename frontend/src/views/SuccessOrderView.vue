@@ -40,7 +40,11 @@ const goToOrders = () => {
 const continueShopping = () => {
   router.push('/shop')
 }
-
+const getImageUrl = (bookImg) => {
+  return bookImg
+    ? `${import.meta.env.VITE_SERVER_IP}/storage/${bookImg}`
+    : import.meta.env.VITE_MOCK_IMAGE
+}
 onMounted(() => {
   console.log(order)
 })
@@ -169,11 +173,7 @@ onMounted(() => {
                 >
                   <div class="w-16 h-20 flex-shrink-0">
                     <img
-                      :src="
-                        item.book?.img
-                          ? `/storage/${item.book.img}`
-                          : 'http://127.0.0.1:8000/storage/images/mock-book.jpg'
-                      "
+                      :src="getImageUrl(item.book.img)"
                       :alt="item.book?.title || 'Book'"
                       class="w-full h-full object-cover rounded border border-gray-200 dark:border-gray-600"
                     />
