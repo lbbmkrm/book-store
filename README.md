@@ -119,10 +119,3 @@ Ini adalah proyek studi kasus untuk aplikasi e-commerce toko buku sederhana. Pro
 | POST | `/api/orders` | Membuat pesanan baru |
 | POST | `/api/orders/{id}/status` | Memperbarui status pesanan (admin) |
 
-## Kontribusi
-
-Kontribusi sangat diterima! Jika Anda ingin berkontribusi pada proyek ini, silakan fork repositori dan buat pull request.
-
-## Lisensi
-
-Proyek ini dilisensikan di bawah [Lisensi MIT](LICENSE).
